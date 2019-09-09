@@ -4,88 +4,181 @@
 
 {% load static %}
 
+
 {% block content %}
 
 <!-- Icon Cards-->
+
 <div class="row">
-		<div class="col-xl-3 col-sm-6 mb-3">
-		  <div class="card text-white bg-primary o-hidden h-100">
-			<div class="card-body">
-			  <div class="card-body-icon">
-				<i class="fas fa-fw fa-comments"></i>
-			  </div>
-			  <div class="mr-5">26 New Messages!</div>
+		{% if messages %}
+				{% for message in messages %}
+				  {% if message.tags == 'error' %}
+					<div class="alert alert-danger">{{ message|safe }}</div>
+				  {% else %}
+				  <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+				  {% endif %}
+			  {% endfor %}
+			{% endif %}
+		<div class="col-lg-6">
+		  <div class="card" style="height: 250px !important;">
+				<div class="card-header">Filter With Chassis ID / ESN</div>
+				<div class="card-body">
+					<form method="POST" id="search-form">
+						{% csrf_token %}
+					<div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-group">
+									<label >Chassis ID / ESN</label>
+									<input type="text" id="search" name="search" class="form-control" placeholder="Search by Chassis ID / ESN" value="{{filter_search}}">
+								</div>
+								<div class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only">
+										<label class="custom-control-label" for="defaultUnchecked">Engine Only</label>
+								</div>
+							</div>
+							<div class="col-md-6">
+									<div class="form-group">
+										<label>&nbsp;</label>
+										<br>
+										<button type="submit" class="btn btn-primary">Search</button>
+										<button type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
+									</div>
+								</div>
+            </div>
+					</div>
+					</form>
+				</div>
 			</div>
-			<a class="card-footer text-white clearfix small z-1" href="#">
-			  <span class="float-left">View Details</span>
-			  <span class="float-right">
-				<i class="fas fa-angle-right"></i>
-			  </span>
-			</a>
-		  </div>
 		</div>
-		<div class="col-xl-3 col-sm-6 mb-3">
-		  <div class="card text-white bg-warning o-hidden h-100">
-			<div class="card-body">
-			  <div class="card-body-icon">
-				<i class="fas fa-fw fa-list"></i>
-			  </div>
-			  <div class="mr-5">11 New Tasks!</div>
-			</div>
-			<a class="card-footer text-white clearfix small z-1" href="#">
-			  <span class="float-left">View Details</span>
-			  <span class="float-right">
-				<i class="fas fa-angle-right"></i>
-			  </span>
-			</a>
-		  </div>
-		</div>
-		<div class="col-xl-3 col-sm-6 mb-3">
-		  <div class="card text-white bg-success o-hidden h-100">
-			<div class="card-body">
-			  <div class="card-body-icon">
-				<i class="fas fa-fw fa-shopping-cart"></i>
-			  </div>
-			  <div class="mr-5">123 New Orders!</div>
-			</div>
-			<a class="card-footer text-white clearfix small z-1" href="#">
-			  <span class="float-left">View Details</span>
-			  <span class="float-right">
-				<i class="fas fa-angle-right"></i>
-			  </span>
-			</a>
-		  </div>
-		</div>
-		<div class="col-xl-3 col-sm-6 mb-3">
-		  <div class="card text-white bg-danger o-hidden h-100">
-			<div class="card-body">
-			  <div class="card-body-icon">
-				<i class="fas fa-fw fa-life-ring"></i>
-			  </div>
-			  <div class="mr-5">13 New Tickets!</div>
-			</div>
-			<a class="card-footer text-white clearfix small z-1" href="#">
-			  <span class="float-left">View Details</span>
-			  <span class="float-right">
-				<i class="fas fa-angle-right"></i>
-			  </span>
-			</a>
-		  </div>
-		</div>
-	  </div>
 
-	  <!-- Area Chart Example-->
-	  <div class="card mb-3">
-		<div class="card-header">
-		  <i class="fas fa-chart-area"></i>
-		  Area Chart Example</div>
-		<div class="card-body">
-		  <canvas id="myAreaChart" width="100%" height="30"></canvas>
-		</div>
-		<div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-	  </div>
 
-	  
-	  
+		<div class="col-lg-6">
+		  <div class="card" style="height: 250px !important;">
+					<div class="card-header">Filter Axis</div>
+					<div class="card-body">
+						<div class="form-group">
+							<div class="form-row">
+								<div class="col-md-12">
+										<label >X Axis</label>
+										<div class="form-group">
+												<!-- Default inline 1-->
+												<div class="custom-control custom-radio custom-control-inline ">
+													<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" checked>
+													<label class="custom-control-label" for="x-axis-1">Day</label>
+												</div>
+												
+												<!-- Default inline 2-->
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week">
+													<label class="custom-control-label" for="x-axis-2">Week</label>
+												</div>
+												
+												<!-- Default inline 3-->
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month">
+													<label class="custom-control-label" for="x-axis-3">Month</label>
+												</div>
+										</div>
 
+										<label >Y Axis</label>
+										<div class="form-group">
+											<div class="custom-control custom-radio custom-control-inline">
+												<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" checked>
+												<label class="custom-control-label" for="y-axis-1">Miles</label>
+											</div>
+											
+											<!-- Default inline 2-->
+											<div class="custom-control custom-radio custom-control-inline">
+												<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours">
+												<label class="custom-control-label" for="y-axis-2">Hours</label>
+											</div>
+											
+											<!-- Default inline 3-->
+											<div class="custom-control custom-radio custom-control-inline">
+												<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km">
+												<label class="custom-control-label" for="y-axis-3">Km</label>
+											</div>
+										</div>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+			</div>
+			
+	</div>
+	<br/>
+	
+	
+
+	 
+
+		<!-- Area Chart Example-->
+		<div class="row">
+
+				<div class="col-lg-4">
+					<div class="card mb-3">
+						<div class="card-header">Vehicle Information</div>
+						<div class="card-body">
+								<div class="form-group">
+										<label >Chassis ID: {{data.Chassis}}</label>
+								</div>
+								<div class="form-group">
+										<label >ESN : {{data.ESN}}</label>
+								</div>
+								<div class="form-group">
+										<label >Engine Family : {{data.Engine_Family}}</label>
+								</div>
+								<div class="form-group">
+										<label >Model Year : {{data.Model_Year}}</label>
+								</div>
+								<div class="form-group">
+										<label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
+								</div>
+								<div class="form-group">
+										<label >HP Rating : {{data.HP_Rating}}</label>
+								</div>
+								<div class="form-group">
+										<label >Truck Model : {{data.Truck_Model}}</label>
+								</div>
+
+								<div class="form-group">
+										<label >Current Software Level : {{data.Current_Software_Level}}</label>
+								</div>
+								<div class="form-group">
+										<label >Last Software Level : {{data.Last_Software_Level}}</label>
+								</div>
+								<div class="form-group">
+										<label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
+								</div>
+								<div class="form-group">
+										<label >Mileage : {{data.plantdata.Mileage}}</label>
+								</div>
+								<div class="form-group">
+										<label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
+								</div>
+								<div class="form-group">
+										<label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
+								</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-lg-8">
+				<div class="card mb-3">
+					<div class="card-header">Chassis History</div>
+					<div class="card-body" id="chart-section">
+						{% if plot_div %}
+							{{plot_div|safe}}
+						{% else %}
+							<div class="alert alert-info">
+								<strong>Info!</strong> Indicates a neutral informative change or action.
+							  </div>
+						{% endif %}
+					</div>
+				</div>
+	</div>
+</div>
 {% endblock  %}
