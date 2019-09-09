@@ -28,6 +28,6 @@ Install all the requirements inside my_project_venv
 
 > python my_project/manage.py runserver 0.0.0.0:8000
 
-5. Visit your localhostß and verify your running project
+5. Visit your localhost and verify your running project
 
-> http://127.0.0.1:8000
+> http://127.0.0.1:8000/
