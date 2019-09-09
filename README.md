@@ -1,4 +1,4 @@
-# Chassis-History-Web-Application
+# Python Django-Web-Application
 
 Steps to run locally
 
