@@ -69,7 +69,6 @@ def dashboard(request):
             if info:
                 config   = {'scrollZoom': False,'displayModeBar': False,'editable': False}    
                 layout = go.Layout(
-                    #title='Time Series with Rangeslider',
                     xaxis=dict(
                         title='Day',showgrid=False, zeroline=False
                     ),
@@ -77,7 +76,6 @@ def dashboard(request):
                         title='Miles',showgrid=False, zeroline=False
                     ),
                     margin=go.layout.Margin( l=30, r=30, b=10, t=10, pad=5 ),
-                    hovermode='closest'
                 )
                 service_count = info.service_set.count()
                 if service_count > 0: 
@@ -85,12 +83,41 @@ def dashboard(request):
                     X_Array = []
                     Y_Array = []
                     hovertext = []
+                    customdataurls = []
                     for service in services:
                         X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
                         Y_Array.append(service.Mileage)
-                        hovertext.append('<a href="https://plot.ly/">Click Here</a>')
-
-                    figure = go.Figure([go.Scatter(x=X_Array,y=Y_Array,text=hovertext,)],layout=layout)
+                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="https://www.google.com" style="text-decoration: underline;">CEP Data</a>')
+                        customdataurls.append('<a href="https://www.google.com" style="text-decoration: underline overline dotted red;">CEP Data</a>')
+                        
+                    #figure = go.Figure([go.Scatter(x=X_Array,y=Y_Array,customdata=customdataurls,)],layout=layout)
+                    figure = go.Figure([go.Scatter(x=X_Array,y=Y_Array,hoverinfo="text",hovertext=hovertext,marker=dict(color="black"),)],layout=layout)
+                    #figure = go.Figure([go.Scatter(x=X_Array,y=Y_Array,text=hovertext,mode='markers',hoverinfo='text',textposition='bottom center', marker=dict(showscale=False,colorscale='Rainbow',reversescale=True,color=[],size=10,line=dict(width=2)),)],layout=layout)
+                    
+                    '''
+                    cnt=0
+                    for x in X_Array:
+                        figure.update_layout(
+                                showlegend=False,
+                                annotations=[
+                                    go.layout.Annotation(
+                                        x=x,
+                                        y=Y_Array[cnt],
+                                        xref="x",
+                                        yref="y",
+                                        text='Engine Build<br>Date : '+str(x)+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="https://www.google.com" style="text-decoration: underline;">CEP Data</a>',
+                                        showarrow=True,
+                                        arrowhead=7,
+                                        ax=0+int(cnt),
+                                        ay=-40+int(cnt)
+                                    )
+                                ]
+                            )
+                        print('------------------')
+                        print(Y_Array[cnt])
+                        cnt=cnt+1
+                    '''
+                    
                     plot_div = plot(figure, config = config, show_link=False, output_type='div', include_plotlyjs=False)
                     context['data'] = info
                     context['plot_div'] = plot_div
@@ -112,6 +139,7 @@ def chart(request):
             if info:
                 config   = {'scrollZoom': False,'displayModeBar': False,'editable': False}    
                 layout = go.Layout(
+                    clickmode='event+select',
                     xaxis=dict(
                         title=str(filter_x_axis),
                         showgrid=False,
