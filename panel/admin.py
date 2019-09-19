@@ -22,7 +22,7 @@ class ServiceForm(forms.ModelForm):
     
     class Meta:
         model = Service
-        fields = ["Service_Date","Mileage"]
+        fields = ["FormType","Service_Date","Mileage"]
 
     def __init__(self, *args, **kwargs):
         super(ServiceForm, self).__init__(*args, **kwargs)

@@ -1,24 +1,14 @@
-
 function getChart(xaxis,yaxis)
 {
     var search 		= $("#search" ).val();
-    var formData = {
-        'x-axis': xaxis,
-        'y-axis': yaxis,
-        'search': search,
-        'csrfmiddlewaretoken': jQuery("input[name='csrfmiddlewaretoken']").val()
-    };
-    $.ajax({
-    type: 'POST',
-    url: "/chart",
-    data: formData,
-    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-    success:
-    function(data)
+    if(search != '')
     {
-        $("#chart-section").html(data);
-    },
-    })
+       $('#search-form').submit()
+    }
+    else
+    {
+        $("#chart-section").html('<div class="alert alert-info">Search by Chassis ID / ESN</div>');
+    }
 }
 function ClearForm()
 {
@@ -34,8 +24,9 @@ $(document).ready(function()
     $("input[name='y-axis']").click(function(){
         getChart($("input[name='x-axis']:checked").val(),$(this).attr('value'))
     })
-
 });
 
-
-    
+function callbackCEPDATA()
+{
+    alert('called')
+}
