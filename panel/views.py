@@ -12,16 +12,22 @@ from django.contrib.auth.models import Group, User
 from django.template.loader import get_template, render_to_string
 from .models import *
 
+import io
+
+import plotly.offline as offline
 from plotly.offline import plot
 import plotly.graph_objs as go
-import requests
 import pandas as pd
 from datetime import datetime
 import json
-import requests
 import csv
 
 import logging
+
+import pdfkit
+from django.template import Context
+
+
 db_logger = logging.getLogger('django_auth_ldap')
 
 #login 
@@ -105,7 +111,7 @@ def dashboard(request):
                         else:
                             Y_Array.append(service.Mileage)
 
-                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br>')
+                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a>'+str(service.get_FormType_display())+'</a><br>')
                     context['data']         = info
                     context['X_Array']      = json.dumps(X_Array)
                     context['Y_Array']      = json.dumps(Y_Array)
@@ -133,14 +139,116 @@ def service(request,token):
         return HttpResponse('Invalid Request')
 
 
-#get_chart
+#get_export_to_csv
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def export_to_csv(request):
-    url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv'
-    response = requests.get(url)        
+def export_to_csv(request,token,x_axis,y_axis):
+    info = CEPData.objects.filter(token = token).first()
+    if info:
+        service_count = info.service_set.count()
+        if service_count > 0: 
+            services    = info.service_set.all()
+            I_Array     = []
+            X_Array     = []
+            Y_Array     = []
+            hovertext   = []
+            for service in services:
+                I_Array.append(str(service.token))
+                #filter by X Axis
+                if x_axis == 'Week':
+                    X_Array.append('Week '+str(service.Service_Date.strftime("%w %b %Y")))
+                elif x_axis == 'Month':
+                    X_Array.append(service.Service_Date.strftime("%b %Y"))
+                else:
+                    X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
+                #filter by Y Axis
+                if y_axis == 'Hours':
+                    km = service.Mileage * 1.60934
+                    hours = km * 0.62
+                    Y_Array.append(round(hours))
+                elif y_axis == 'Km':
+                    km = service.Mileage * 1.60934
+                    Y_Array.append(round(km))
+                else:
+                    Y_Array.append(service.Mileage)
 
-    with open('out.csv', 'w') as f:
-        writer = csv.writer(f)
-        for line in response.iter_lines():
-            writer.writerow(line.decode('utf-8').split(','))
+                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">CEP Data</a>')
+
+        response = HttpResponse(content_type='text/csv')
+        filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())
+        response['Content-Disposition'] = 'attachment; filename="'+str(filename)+'.csv"'
+        writer = csv.writer(response)
+        writer.writerow([x_axis, y_axis])
+        if X_Array:
+            for x in range(len(X_Array)):
+                writer.writerow([X_Array[x], Y_Array[x]])
+        return response
+
+#export_to_pdf
+@login_required(login_url="/login")  # - if not logged in redirect to /
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def export_to_pdf(request,token,x_axis,y_axis):
+    info = CEPData.objects.filter(token = token).first()
+    if info:
+        service_count = info.service_set.count()
+        if service_count > 0: 
+            services    = info.service_set.all()
+            I_Array     = []
+            X_Array     = []
+            Y_Array     = []
+            hovertext   = []
+            for service in services:
+                I_Array.append(str(service.token))
+                #filter by X Axis
+                if x_axis == 'Week':
+                    X_Array.append('Week '+str(service.Service_Date.strftime("%w %b %Y")))
+                elif x_axis == 'Month':
+                    X_Array.append(service.Service_Date.strftime("%b %Y"))
+                else:
+                    X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
+                #filter by Y Axis
+                if y_axis == 'Hours':
+                    km = service.Mileage * 1.60934
+                    hours = km * 0.62
+                    Y_Array.append(round(hours))
+                elif y_axis == 'Km':
+                    km = service.Mileage * 1.60934
+                    Y_Array.append(round(km))
+                else:
+                    Y_Array.append(service.Mileage)
+
+                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">CEP Data</a>')
+    
+        data = [go.Scatter(x=X_Array, y=Y_Array, mode='lines+markers', text=hovertext, textposition='top center')]
+        config   = {'scrollZoom': False,'displayModeBar': False,'editable': False}    
+        layout = go.Layout(
+            title= str(info.Chassis)+' Chassis History',
+            width=1200,
+            height=800,
+            xaxis=dict(
+                title=str(x_axis),showgrid=False, zeroline=False
+            ),
+            yaxis=dict(
+                title=str(y_axis),showgrid=False, zeroline=False
+            )
+            ,margin=go.layout.Margin( l=30, r=30, b=10, t=50, pad=5 )
+        )
+
+        filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())+'.pdf'
+
+        fig = offline.plot({'data': data,
+                            'layout': layout},
+                            config = config,
+                            auto_open=False,
+                            show_link=False,
+                            output_type='div', include_plotlyjs=True)
+
+        opt = {'javascript-delay': 1000,'no-stop-slow-scripts': None,'debug-javascript': None}
+        pdfkit.from_string(fig, 'media/pdf/'+str(filename), options=opt)
+        pdf = open('media/pdf/'+str(filename), 'rb')
+        response = HttpResponse(pdf.read(), content_type='application/pdf')  # Generates the response as pdf response.
+        response['Content-Disposition'] = 'attachment; filename='+str(filename)
+        pdf.close()
+        return response  # returns the response.
+        
+    

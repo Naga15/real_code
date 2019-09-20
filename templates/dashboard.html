@@ -10,15 +10,6 @@
 <!-- Icon Cards-->
 <form method="POST" id="search-form">
 <div class="row">
-		{% if messages %}
-			{% for message in messages %}
-				{% if message.tags == 'error' %}
-				<div class="alert alert-danger">{{ message|safe }}</div>
-				{% else %}
-				<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
-				{% endif %}
-			{% endfor %}
-		{% endif %}
 		{% csrf_token %}
 		<div class="col-lg-6">
 		  <div class="card" style="height: 250px !important;">
@@ -115,7 +106,8 @@
 
 <!-- Area Chart Example-->
 <div class="row">
-
+		{% if isData == 'Yes'%}
+		
 		<div class="col-lg-4">
 			<div class="card mb-3">
 				<div class="card-header">Vehicle Information</div>
@@ -163,8 +155,6 @@
 				</div>
 			</div>
 		</div>
-
-
 		<div class="col-lg-8">
 			<div class="card mb-3">
 				<div class="card-header">
@@ -172,47 +162,92 @@
 						Timeline Chart
 					</div>
 					<div class="text-right">
+						{% if isData == 'Yes'%}
 						<button type="button" class="btn btn-secondary" onclick="PrintPlot()">Print</button>
-						<button type="button" class="btn btn-secondary" onclick="downloadPDF()">PDF</button>
-						<!--<a href="export-to-csv" class="btn btn-secondary">Export</a>-->
-						<button type="button" class="btn btn-secondary" onclick="ExprtCSV()">Export CSV</button>
+						<!--<button type="button" class="btn btn-secondary" onclick="downloadPDF()">PDF</button>-->
+						<a href="export-to-pdf/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">PDF</a>
+						<a href="export-to-csv/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">Export CSV</a>
+						{% endif %}
 					</div>
 				</div>
 				<div class="card-body" id="data-test">
 					<div id="chart-section">
-							{% if isData == 'No'%}
-								<div class="alert alert-primary" role="alert">
-									{{DefaultMessage}}
-								</div>
-							{% endif %}
 					</div>
 				</div>
 			</div>
 		</div>
+		
+		{% else %}
+
+			<div class="col-lg-12">
+					<div class="alert alert-primary" role="alert">
+						{{DefaultMessage}}
+					</div>
+			</div>
+
+		{% endif %}
+
+
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
-		<div class="modal-dialog" id='form-data'>
-		  
-		</div>
-	  </div>
+	<div class="modal-dialog" id='form-data'>
+	</div>
+</div>
 	 
 {% if isData == 'Yes'%}	  
 <script>
+
+var annotations = []
+var X_Array = JSON.parse('{{X_Array|safe}}')
+var Y_Array = JSON.parse('{{Y_Array|safe}}')
+var TEXTS 	= JSON.parse('{{hovertext|safe}}')
+var DID 		= JSON.parse('{{I_Array|safe}}')
+var i;
+for (i = 0; i < X_Array.length; i++) 
+{ 
+	color_bg = getRandomColor()
+	annotations.push({
+									x: X_Array[i],
+									y: Y_Array[i]+250, 
+									align: "center", 
+									arrowcolor: color_bg, 
+									arrowhead: 20, 
+									arrowsize: 1, 
+									ax: -0, 
+									ay: -90, 
+									//bgcolor: color_bg, 
+									bordercolor: color_bg, 
+									borderpad: 3, 
+									borderwidth: 2, 
+									font: {size: 13}, 
+									text: TEXTS[i], 
+									textangle: 0
+									}
+								);
+}
+
+
+
+
 var myPlot = document.getElementById('chart-section'),
     data = [ { 
 				x:JSON.parse('{{X_Array|safe}}'), 
 				y:JSON.parse('{{Y_Array|safe}}'),
 				DID : JSON.parse('{{I_Array|safe}}'),
 				type:'scatter',
-            	mode:'lines+markers',
+        mode:'lines+markers',
 				name: 'Lines, Markers and Text', 
 				text: JSON.parse('{{hovertext|safe}}'),
 				marker:{size:16} 
 				} 
 			],
     layout = {
+		
+			showlegend: false,
+			annotations: annotations,
+
 		hovermode:'closest',
 		autosize: true,
 		height: 600,
@@ -224,7 +259,7 @@ var myPlot = document.getElementById('chart-section'),
 			pad: 1
 		},
 		title: {
-			text:'{{filter_search}} Chassis History',
+			text:'{{data.Chassis}} Chassis History',
 		},
 		xaxis: {
 			title: {
@@ -249,7 +284,13 @@ myPlot.on('plotly_click', function(data){
 	}
 	if(token)
 	{
-		$.ajax({
+		openFormPopup(token)
+	}
+});
+
+function openFormPopup(token) 
+{
+	$.ajax({
 		type: 'GET',
 		url: "/service/"+token,
 		success:
@@ -260,30 +301,35 @@ myPlot.on('plotly_click', function(data){
 			$("#myModal").modal();
 		},
 		})
-	}
-});
+}
 
-
+function getRandomColor() 
+{
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
 function PrintPlot() 
 {
-	var divToPrint=document.getElementById("data-test");
-	newWin= window.open("");
-	newWin.document.write(divToPrint.outerHTML);
-	newWin.print();
-	newWin.close();
+	var divToPrint	=	document.getElementById("data-test");
+	var mywindow 		= window.open('', 'data-test');
+	mywindow.document.write('<html><head><title>{{data.Chassis}} Chassis History</title>');
+	mywindow.document.write('</head><body >');
+	mywindow.document.write(divToPrint.outerHTML);
+	mywindow.document.write('</body></html>');
+	mywindow.print();
+	mywindow.close();
 }
 
 function downloadPDF() 
 {
-	Plotly.downloadImage(myPlot, { format: 'png', width: 800, height: 600, filename: 'newplot' });
+	Plotly.downloadImage(myPlot, { format: 'png', width: 800, height: 600, filename: '{{data.Chassis}}-Chassis-History' });
 }
 
-function ExprtCSV() 
-{
-	alert('called')
-}
-		
 </script>
 {% endif  %}
 

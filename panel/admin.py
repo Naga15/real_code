@@ -29,7 +29,7 @@ class ServiceForm(forms.ModelForm):
 
 class ServiceInline(admin.TabularInline):
     model           = Service
-    extra           = 1
+    extra           = 0
     form            = ServiceForm
     
 class CEPDataForm(forms.ModelForm):
