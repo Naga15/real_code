@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta http-equiv="Content-Language" content="en" />
+		<meta name="msapplication-TileColor" content="#2d89ef">
+		<meta name="theme-color" content="#4188c9">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon"/>
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />
+		<title>{% block title %}{{ request.path_info | slugify }}{% comment %}{{ request.build_absolute_uri }}{% endcomment %}{% endblock %}</title>
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
+		
+		<!-- jquery -->
+		<!-- <script src="{% static 'js/vendors/jquery-3.2.1.slim.min.js' %}"></script> -->
+		<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+		<link rel="stylesheet" href="{% static 'ui-dialog/jquery-confirm.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+		<script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+		<script src="{% static 'js/moment.min.js' %}"></script>
+
+		<!-- Date Picker-->
+		<script src="{% static 'js/jquery-ui.js' %}"></script>
+		
+		<!-- require.js -->
+		<script src="{% static 'js/require.min.js' %}"></script>
+		<script>
+			requirejs.config({
+				baseUrl: '/'
+			});
+		</script>
+		
+		<!-- Dashboard Core -->
+		<link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/dashboard.js' %}"></script>
+		
+		<!-- c3.js Charts Plugin -->
+		<link href="{% static 'plugins/charts-c3/plugin.css' %}" rel="stylesheet" />
+		<script src="{% static 'plugins/charts-c3/plugin.js' %}"></script>
+		
+		<!-- Input Mask Plugin -->
+		<script src="{% static 'plugins/input-mask/plugin.js' %}"></script>
+</head>
+
+<body class="">
+	<div class="page">
+		<div class="flex-fill">
+			
+			<!-- Menu Page -->
+			{% if request.user.id > 0%}
+			{% include 'menu.html' %}
+			{% endif %}
+			
+			{% block content %}
+				Body Content
+			{% endblock %}
+			
+		</div>
+		<footer class="footer">
+			<div class="container">
+			<div class="row align-items-center flex-row-reverse">
+				<div class="col-auto ml-lg-auto">
+				</div>
+				<div class="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
+				&copy; {% now 'Y' %} <a href="/">Order Management System</a>. All rights reserved.
+				</div>
+			</div>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>

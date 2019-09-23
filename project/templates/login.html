@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Wesaite - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template-->
+  <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="bg-dark">
+
+  <div class="container">
+    <div class="card card-login mx-auto mt-5">
+      <div class="card-header">Login</div>
+<div class="imgcontainer">
+    <img src="/static/logo.png"  alt="Avatar" class="avatar">
+  </div>
+      <div class="card-body">
+		<form method="post">
+			{% csrf_token %}
+			{% if messages %}
+				{% for message in messages %}
+					{% if message.tags == 'error' %}
+					<div class="alert alert-danger">{{ message|safe }}</div>
+					{% else%}
+					<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+			{% if form.errors %}
+				<div class="alert alert-danger">
+					<h4>Please fix the following errors</h4>
+					<ul>
+					{% for field in form %}
+						{% if field.errors %}
+							{% for error in field.errors %}
+								<li><a href="#id_{{ field.name }}" class="error">{{ field.name }} - {{ error|escape }}</a></li>
+							{% endfor %}
+						{% endif %}
+					{% endfor %}
+					</ul>
+					{% if form.non_field_errors %}
+						{{ form.non_field_errors }}
+					{% endif %}
+				</div>
+			{% endif %}
+				  
+			{% for field in form.visible_fields %}
+			<div class="form-group">
+				<div class="form-label-group">
+					<input id="id_{{ field.name }}" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" value="{{ field.value|default_if_none:'' }}" required="required" autofocus="autofocus" />
+					<label for="id_{{ field.name }}" class="form-label">{{ field.label }}</label>
+				</div>
+			</div>
+			{% endfor %}
+			<button type="submit" class="btn btn-primary btn-block">Login</button>
+			{% for hidden_field in form.hidden_fields %}
+				{{ hidden_field }}
+			{% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+</body>
+
+</html>
