@@ -55,6 +55,7 @@ class PlantData(models.Model):
 class Service(models.Model):
     cep                             = models.ForeignKey(CEPData,on_delete=models.CASCADE)
     token                           = models.UUIDField(default= uuid.uuid4)
+    FormType                        = models.CharField(max_length=20, choices=(('CEP','CEP Data'),('Plant','Plant Data'),('Case','Case'),('Claim','Claim Info'),('Davie','Davie Logs'),('Fault','Fault Codes')),  default=0)
     Service_Date                    = models.DateField(default=date.today)
     Mileage                         = models.IntegerField(blank = True, null=True)
     publish                         = models.BooleanField(default=True)

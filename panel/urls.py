@@ -7,6 +7,7 @@ urlpatterns = [
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
     path('dashboard', views.dashboard, name='dashboard'),
-    path('chart', views.chart, name='chart'),
+    path('export-to-csv', views.export_to_csv, name='export-to-csv'),
+    path('service/<str:token>', views.service, name='service-data'),
     
 ]

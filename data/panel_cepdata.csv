@@ -1,0 +1,3 @@
+id,token,publish,CreatedAt,UpdatedAt,BOEC,Chassis,Current_Software_Level,ESN,Engine_Family,HP_Rating,Last_Software_Level,Model_Year,Truck_Model,Engine_Date
+3,6f59059e02a5451db03c317d11a05879,1,2019-09-03 08:08:19.506696,2019-09-04 07:37:27.506020,,GJ125225,,Y094453,FPCRH12.9M01,,,2015,T680 Series Conventional,2015-09-28
+4,25d181408da54438ab0b0f2737e1bdd4,1,2019-09-03 12:37:54.227143,2019-09-03 13:23:47.669102,,KJ222666,,Y094454,FPCRH12.9M01,,,2018,T680 Series Conventional,2018-03-09

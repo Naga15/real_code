@@ -8,27 +8,17 @@
 {% block content %}
 
 <!-- Icon Cards-->
-
+<form method="POST" id="search-form">
 <div class="row">
-		{% if messages %}
-				{% for message in messages %}
-				  {% if message.tags == 'error' %}
-					<div class="alert alert-danger">{{ message|safe }}</div>
-				  {% else %}
-				  <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
-				  {% endif %}
-			  {% endfor %}
-			{% endif %}
+		{% csrf_token %}
 		<div class="col-lg-6">
 		  <div class="card" style="height: 250px !important;">
 				<div class="card-header">Filter With Chassis ID / ESN</div>
 				<div class="card-body">
-					<form method="POST" id="search-form">
-						{% csrf_token %}
 					<div class="form-group">
-            <div class="form-row">
-              <div class="col-md-6">
-                <div class="form-group">
+						<div class="form-row">
+						<div class="col-md-6">
+							<div class="form-group">
 									<label >Chassis ID / ESN</label>
 									<input type="text" id="search" name="search" class="form-control" placeholder="Search by Chassis ID / ESN" value="{{filter_search}}">
 								</div>
@@ -45,9 +35,8 @@
 										<button type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
 									</div>
 								</div>
-            </div>
+						</div>
 					</div>
-					</form>
 				</div>
 			</div>
 		</div>
@@ -64,19 +53,19 @@
 										<div class="form-group">
 												<!-- Default inline 1-->
 												<div class="custom-control custom-radio custom-control-inline ">
-													<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" checked>
+													<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" {% if filter_x_axis == 'Day' %} checked {% endif %}>
 													<label class="custom-control-label" for="x-axis-1">Day</label>
 												</div>
 												
 												<!-- Default inline 2-->
 												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week">
+													<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week" {% if filter_x_axis == 'Week' %} checked {% endif %}>
 													<label class="custom-control-label" for="x-axis-2">Week</label>
 												</div>
 												
 												<!-- Default inline 3-->
 												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month">
+													<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month" {% if filter_x_axis == 'Month' %} checked {% endif %}>
 													<label class="custom-control-label" for="x-axis-3">Month</label>
 												</div>
 										</div>
@@ -84,19 +73,19 @@
 										<label >Y Axis</label>
 										<div class="form-group">
 											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" checked>
+												<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" {% if filter_y_axis == 'Miles' %} checked {% endif %}>
 												<label class="custom-control-label" for="y-axis-1">Miles</label>
 											</div>
 											
 											<!-- Default inline 2-->
 											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours">
+												<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours" {% if filter_y_axis == 'Hours' %} checked {% endif %}>
 												<label class="custom-control-label" for="y-axis-2">Hours</label>
 											</div>
 											
 											<!-- Default inline 3-->
 											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km">
+												<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km" {% if filter_y_axis == 'Km' %} checked {% endif %}>
 												<label class="custom-control-label" for="y-axis-3">Km</label>
 											</div>
 										</div>
@@ -106,79 +95,243 @@
 				</div>
 			</div>
 			</div>
-			
+		
 	</div>
+</form>
 	<br/>
 	
 	
 
 	 
 
-		<!-- Area Chart Example-->
-		<div class="row">
-
-				<div class="col-lg-4">
-					<div class="card mb-3">
-						<div class="card-header">Vehicle Information</div>
-						<div class="card-body">
-								<div class="form-group">
-										<label >Chassis ID: {{data.Chassis}}</label>
-								</div>
-								<div class="form-group">
-										<label >ESN : {{data.ESN}}</label>
-								</div>
-								<div class="form-group">
-										<label >Engine Family : {{data.Engine_Family}}</label>
-								</div>
-								<div class="form-group">
-										<label >Model Year : {{data.Model_Year}}</label>
-								</div>
-								<div class="form-group">
-										<label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
-								</div>
-								<div class="form-group">
-										<label >HP Rating : {{data.HP_Rating}}</label>
-								</div>
-								<div class="form-group">
-										<label >Truck Model : {{data.Truck_Model}}</label>
-								</div>
-
-								<div class="form-group">
-										<label >Current Software Level : {{data.Current_Software_Level}}</label>
-								</div>
-								<div class="form-group">
-										<label >Last Software Level : {{data.Last_Software_Level}}</label>
-								</div>
-								<div class="form-group">
-										<label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
-								</div>
-								<div class="form-group">
-										<label >Mileage : {{data.plantdata.Mileage}}</label>
-								</div>
-								<div class="form-group">
-										<label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
-								</div>
-								<div class="form-group">
-										<label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
-								</div>
+<!-- Area Chart Example-->
+<div class="row">
+		{% if isData == 'Yes'%}
+		
+		<div class="col-lg-4">
+			<div class="card mb-3">
+				<div class="card-header">Vehicle Information</div>
+				<div class="card-body">
+						<div class="form-group">
+								<label >Chassis ID: {{data.Chassis}}</label>
 						</div>
-					</div>
+						<div class="form-group">
+								<label >ESN : {{data.ESN}}</label>
+						</div>
+						<div class="form-group">
+								<label >Engine Family : {{data.Engine_Family}}</label>
+						</div>
+						<div class="form-group">
+								<label >Model Year : {{data.Model_Year}}</label>
+						</div>
+						<div class="form-group">
+								<label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
+						</div>
+						<div class="form-group">
+								<label >HP Rating : {{data.HP_Rating}}</label>
+						</div>
+						<div class="form-group">
+								<label >Truck Model : {{data.Truck_Model}}</label>
+						</div>
+
+						<div class="form-group">
+								<label >Current Software Level : {{data.Current_Software_Level}}</label>
+						</div>
+						<div class="form-group">
+								<label >Last Software Level : {{data.Last_Software_Level}}</label>
+						</div>
+						<div class="form-group">
+								<label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
+						</div>
+						<div class="form-group">
+								<label >Mileage : {{data.plantdata.Mileage}}</label>
+						</div>
+						<div class="form-group">
+								<label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
+						</div>
+						<div class="form-group">
+								<label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
+						</div>
 				</div>
-
-
-				<div class="col-lg-8">
-				<div class="card mb-3">
-					<div class="card-header">Chassis History</div>
-					<div class="card-body" id="chart-section">
-						{% if plot_div %}
-							{{plot_div|safe}}
-						{% else %}
-							<div class="alert alert-info">
-								Data not found.
-							  </div>
+			</div>
+		</div>
+		<div class="col-lg-8">
+			<div class="card mb-3">
+				<div class="card-header">
+					<div style="float:left">
+						Timeline Chart
+					</div>
+					<div class="text-right">
+						{% if isData == 'Yes'%}
+						<button type="button" class="btn btn-secondary" onclick="PrintPlot()">Print</button>
+						<!--<button type="button" class="btn btn-secondary" onclick="downloadPDF()">PDF</button>-->
+						<a href="export-to-pdf/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">PDF</a>
+						<a href="export-to-csv/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">Export CSV</a>
 						{% endif %}
 					</div>
 				</div>
+				<div class="card-body" id="data-test">
+					<div id="chart-section">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		{% else %}
+
+			<div class="col-lg-12">
+					<div class="alert alert-primary" role="alert">
+						{{DefaultMessage}}
+					</div>
+			</div>
+
+		{% endif %}
+
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+	<div class="modal-dialog" id='form-data'>
 	</div>
 </div>
+	 
+{% if isData == 'Yes'%}	  
+<script>
+
+var annotations = []
+var X_Array = JSON.parse('{{X_Array|safe}}')
+var Y_Array = JSON.parse('{{Y_Array|safe}}')
+var TEXTS 	= JSON.parse('{{hovertext|safe}}')
+var DID 		= JSON.parse('{{I_Array|safe}}')
+var i;
+for (i = 0; i < X_Array.length; i++) 
+{ 
+	color_bg = getRandomColor()
+	annotations.push({
+									x: X_Array[i],
+									y: Y_Array[i]+250, 
+									align: "center", 
+									arrowcolor: color_bg, 
+									arrowhead: 20, 
+									arrowsize: 1, 
+									ax: -0, 
+									ay: -90, 
+									//bgcolor: color_bg, 
+									bordercolor: color_bg, 
+									borderpad: 3, 
+									borderwidth: 2, 
+									font: {size: 13}, 
+									text: TEXTS[i], 
+									textangle: 0
+									}
+								);
+}
+
+
+
+
+var myPlot = document.getElementById('chart-section'),
+    data = [ { 
+				x:JSON.parse('{{X_Array|safe}}'), 
+				y:JSON.parse('{{Y_Array|safe}}'),
+				DID : JSON.parse('{{I_Array|safe}}'),
+				type:'scatter',
+        mode:'lines+markers',
+				name: 'Lines, Markers and Text', 
+				text: JSON.parse('{{hovertext|safe}}'),
+				marker:{size:16} 
+				} 
+			],
+    layout = {
+		
+			showlegend: false,
+			annotations: annotations,
+
+		hovermode:'closest',
+		autosize: true,
+		height: 600,
+		margin: {
+			l: 50,
+			r: 10,
+			b: 100,
+			t: 50,
+			pad: 1
+		},
+		title: {
+			text:'{{data.Chassis}} Chassis History',
+		},
+		xaxis: {
+			title: {
+			text: '{{filter_x_axis}}',
+			},
+		},
+		yaxis: {
+			title: {
+			text: '{{filter_y_axis}}',
+			}
+		}
+    };
+
+Plotly.newPlot('chart-section', data, layout,{scrollZoom: false, displayModeBar: false, editable: false})
+
+myPlot.on('plotly_click', function(data){
+    var token = '';
+	for(var i=0; i < data.points.length; i++)
+	{
+        ClickIndex = data.points[i].pointIndex;
+		token = data.points[i].data.DID[ClickIndex];
+	}
+	if(token)
+	{
+		openFormPopup(token)
+	}
+});
+
+function openFormPopup(token) 
+{
+	$.ajax({
+		type: 'GET',
+		url: "/service/"+token,
+		success:
+		function(data)
+		{
+			$('#form-data').html('')
+			$('#form-data').html(data)
+			$("#myModal").modal();
+		},
+		})
+}
+
+function getRandomColor() 
+{
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function PrintPlot() 
+{
+	var divToPrint	=	document.getElementById("data-test");
+	var mywindow 		= window.open('', 'data-test');
+	mywindow.document.write('<html><head><title>{{data.Chassis}} Chassis History</title>');
+	mywindow.document.write('</head><body >');
+	mywindow.document.write(divToPrint.outerHTML);
+	mywindow.document.write('</body></html>');
+	mywindow.print();
+	mywindow.close();
+}
+
+function downloadPDF() 
+{
+	Plotly.downloadImage(myPlot, { format: 'png', width: 800, height: 600, filename: '{{data.Chassis}}-Chassis-History' });
+}
+
+</script>
+{% endif  %}
+
+
 {% endblock  %}
