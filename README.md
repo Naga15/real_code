@@ -53,4 +53,4 @@ Require all granted<br/>
 WSGIDaemonProcess chassis python-path=/home/ubuntu/chassis python-home=/home/ubuntu/chassis/my_project_venv<br/>
 WSGIProcessGroup chassis<br/>
 WSGIScriptAlias / /home/ubuntu/chassis/project/wsgi.py<br/>
-</VirtualHost><br/>
+</VirtualHost>
