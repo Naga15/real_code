@@ -31,3 +31,26 @@ Install all the requirements inside my_project_venv
 5. Visit your localhost and verify your running project
 
 > http://127.0.0.1:8000/
+
+
+
+<VirtualHost *:80>
+ServerAdmin webmaster@example.com
+DocumentRoot /home/ubuntu/chassis
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+Alias /static /home/ubuntu/chassis/staticfiles
+<Directory /home/ubuntu/chassis/staticfiles>
+Require all granted
+</Directory>
+
+<Directory /home/ubuntu/chassis/project>
+<Files wsgi.py>
+Require all granted
+</Files>
+</Directory>
+WSGIDaemonProcess chassis python-path=/home/ubuntu/chassis python-home=/home/ubuntu/chassis/my_project_venv
+WSGIProcessGroup chassis
+WSGIScriptAlias / /home/ubuntu/chassis/project/wsgi.py
+</VirtualHost>
