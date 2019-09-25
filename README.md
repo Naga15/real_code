@@ -55,3 +55,22 @@ WSGIProcessGroup chassis
 WSGIScriptAlias / /home/ubuntu/chassis/project/wsgi.py
 </VirtualHost>
 ```
+
+
+commands for running on server
+
+```
+   git clone https://github.com/mkdesai/Chassis-History-Web-Application.git
+   mv Chassis-History-Web-Application/ chassis
+   cd chassis/
+   virtualenv -p python3 my_project_venv
+   source my_project_venv/bin/activat
+   source my_project_venv/bin/activate
+   pip3 install -r requirements.txt
+   pip3 install pdfkit
+   sudo chown www-data:www-data db.sqlite3
+   python manage.py runserver 172.31.87.159:8000
+   sudo chown www-data:www-data db.sqlite3
+   python3 manage.py  makemigrations
+   sudo systemctl restart apache2
+```
