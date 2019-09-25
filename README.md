@@ -34,23 +34,23 @@ Install all the requirements inside my_project_venv
 
 
 
-<VirtualHost *:80>
-ServerAdmin webmaster@example.com
-DocumentRoot /home/ubuntu/chassis
-ErrorLog ${APACHE_LOG_DIR}/error.log
-CustomLog ${APACHE_LOG_DIR}/access.log combined
+<VirtualHost *:80><br/>
+ServerAdmin webmaster@example.com<br/>
+DocumentRoot /home/ubuntu/chassis<br/>
+ErrorLog ${APACHE_LOG_DIR}/error.log<br/>
+CustomLog ${APACHE_LOG_DIR}/access.log combined<br/>
 
-Alias /static /home/ubuntu/chassis/staticfiles
-<Directory /home/ubuntu/chassis/staticfiles>
-Require all granted
-</Directory>
+Alias /static /home/ubuntu/chassis/staticfiles<br/>
+<Directory /home/ubuntu/chassis/staticfiles><br/>
+Require all granted<br/>
+</Directory><br/>
 
-<Directory /home/ubuntu/chassis/project>
-<Files wsgi.py>
-Require all granted
-</Files>
-</Directory>
-WSGIDaemonProcess chassis python-path=/home/ubuntu/chassis python-home=/home/ubuntu/chassis/my_project_venv
-WSGIProcessGroup chassis
-WSGIScriptAlias / /home/ubuntu/chassis/project/wsgi.py
-</VirtualHost>
+<Directory /home/ubuntu/chassis/project><br/>
+<Files wsgi.py><br/>
+Require all granted<br/>
+</Files><br/>
+</Directory><br/>
+WSGIDaemonProcess chassis python-path=/home/ubuntu/chassis python-home=/home/ubuntu/chassis/my_project_venv<br/>
+WSGIProcessGroup chassis<br/>
+WSGIScriptAlias / /home/ubuntu/chassis/project/wsgi.py<br/>
+</VirtualHost><br/>
