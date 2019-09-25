@@ -64,7 +64,6 @@ commands for running on server
    mv Chassis-History-Web-Application/ chassis
    cd chassis/
    virtualenv -p python3 my_project_venv
-   source my_project_venv/bin/activat
    source my_project_venv/bin/activate
    pip3 install -r requirements.txt
    pip3 install pdfkit
