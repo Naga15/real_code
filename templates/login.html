@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Chassis - Login</title>
+  <title>PACCAR Solutions</title>
 
   <!-- Custom fonts for this template-->
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -20,12 +20,11 @@
 
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark bg-dark-bg">
 
   <div class="container">
-    <div class="card card-login mx-auto mt-5">
-	  <div class="row"><img src="static/logo.png" class="img-responsive" alt="" /></div>	
-      <div class="card-header">Login</div>
+    <div class="card card-login mx-auto mt-6">
+      <div class="card-header"><div class="text-center"><img src="{% static 'img/logo1.png' %}"></div></div>
       <div class="card-body">
 		<form method="post">
 			{% csrf_token %}
@@ -57,12 +56,16 @@
 			{% endif %}
 				  
 			{% for field in form.visible_fields %}
-			<div class="form-group">
-				<div class="form-label-group">
-					<input id="id_{{ field.name }}" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" value="{{ field.value|default_if_none:'' }}" required="required" autofocus="autofocus" />
-					<label for="id_{{ field.name }}" class="form-label">{{ field.label }}</label>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						{% if field.field.widget.input_type == 'password' %}
+							<span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-lock"></i></span>
+						{% else %}
+							<span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-user"></i></span>
+						{% endif %}
+					</div>
+					<input id="id_{{ field.name }}" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" aria-describedby="id_{{ field.name }}" class="form-control" value="{{ field.value|default_if_none:'' }}" required="required" autofocus="autofocus" placeholder="{{ field.field.widget.attrs.placeholder }}"/>
 				</div>
-			</div>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary btn-block">Login</button>
 			{% for hidden_field in form.hidden_fields %}

@@ -4823,11 +4823,13 @@ input[type="button"].btn-block {
 }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.5);
+  /*color: rgba(255, 255, 255, 0.5);*/
+  color: #6c757d;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-  color: rgba(255, 255, 255, 0.75);
+  /*color: rgba(255, 255, 255, 0.75);*/
+  color: #343a40;
 }
 
 .navbar-dark .navbar-nav .nav-link.disabled {
@@ -4838,7 +4840,8 @@ input[type="button"].btn-block {
 .navbar-dark .navbar-nav .active > .nav-link,
 .navbar-dark .navbar-nav .nav-link.show,
 .navbar-dark .navbar-nav .nav-link.active {
-  color: #fff;
+  /*color: #fff;*/
+  color: #343a40;
 }
 
 .navbar-dark .navbar-toggler {
@@ -6986,6 +6989,21 @@ button.bg-light:focus {
 
 .bg-dark {
   background-color: #343a40 !important;
+
+}
+.bg-blue {
+  /*background-color: #0069d9 !important;*/
+  background-color: #fff !important;
+  border-bottom: 1px solid #e9ecef;
+
+}
+
+.bg-dark-bg {
+  background-image: url("../img/bg.jpg") !important;
+  background-position: 50% 50% !important;
+  background-repeat: no-repeat !important;
+  
+
 }
 
 a.bg-dark:hover, a.bg-dark:focus,
@@ -8564,6 +8582,10 @@ button.bg-dark:focus {
 .mt-5,
 .my-5 {
   margin-top: 3rem !important;
+}
+.mt-6,
+.my-6 {
+  margin-top: 6rem !important;
 }
 
 .mr-5,
@@ -10528,6 +10550,10 @@ a.text-dark:hover, a.text-dark:focus {
   .container {
     min-width: 992px !important;
   }
+  .bg{
+    background-image: url("img/bg.jpg");
+    background-repeat: no-repeat;
+  }
   .navbar {
     display: none;
   }
@@ -10628,7 +10654,8 @@ body {
 }
 
 .navbar-nav .nav-item.active .nav-link {
-  color: #fff;
+  /*color: #fff;*/
+  color: #343a40;
 }
 
 .navbar-nav .nav-item.dropdown .dropdown-toggle::after {
@@ -10670,8 +10697,9 @@ body {
 
 .sidebar {
   width: 90px !important;
-  background-color: #212529;
+  background-color: #f8f9fa;
   min-height: calc(100vh - 56px);
+  border-right: 1px solid #e9ecef;
 }
 
 .sidebar .nav-item:last-child {
@@ -10707,11 +10735,14 @@ body {
 }
 
 .sidebar .nav-item .nav-link {
-  color: rgba(255, 255, 255, 0.5);
+  /*color: rgba(255, 255, 255, 0.5);*/
+  color: #6c757d;
+
 }
 
 .sidebar .nav-item .nav-link:active, .sidebar .nav-item .nav-link:focus, .sidebar .nav-item .nav-link:hover {
-  color: rgba(255, 255, 255, 0.75);
+  /*color: rgba(255, 255, 255, 0.75);*/
+  color: #6c757d;
 }
 
 .sidebar.toggled {
@@ -10889,7 +10920,8 @@ footer.sticky-footer {
   bottom: 0;
   width: calc(100% - 90px);
   height: 80px;
-  background-color: #e9ecef;
+  background-color: #fff;
+  /*background-color: #e9ecef;*/
 }
 
 footer.sticky-footer .copyright {
