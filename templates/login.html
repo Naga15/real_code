@@ -23,9 +23,20 @@
 <body class="bg-dark bg-dark-bg">
 
   <div class="container">
+
+
     <div class="card card-login mx-auto mt-6">
-      <div class="card-header"><div class="text-center"><img src="{% static 'img/logo1.png' %}"></div></div>
-      <div class="card-body">
+<div class="card-header" style="
+    background: #9C27B0;
+    background-image: linear-gradient(45deg, #03A9F4, transparent);
+"><div class="text-center"><h1 style="
+    font-style: italic;
+    color: white;
+">Paccar Technical Center</h1></div></div>
+<!--      <div class="card-header"><div class="text-center"><img src="{% static 'img/logo1.png' %}"></div></div>
+   
+-->
+   <div class="card-body">
 		<form method="post">
 			{% csrf_token %}
 			{% if messages %}

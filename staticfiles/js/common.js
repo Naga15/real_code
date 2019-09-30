@@ -1,26 +1,9 @@
-
 function getChart(xaxis,yaxis)
 {
     var search 		= $("#search" ).val();
     if(search != '')
     {
-        var formData = {
-            'x-axis': xaxis,
-            'y-axis': yaxis,
-            'search': search,
-            'csrfmiddlewaretoken': jQuery("input[name='csrfmiddlewaretoken']").val()
-        };
-        $.ajax({
-        type: 'POST',
-        url: "/chart",
-        data: formData,
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        success:
-        function(data)
-        {
-            $("#chart-section").html(data);
-        },
-        })
+       $('#search-form').submit()
     }
     else
     {
@@ -41,8 +24,9 @@ $(document).ready(function()
     $("input[name='y-axis']").click(function(){
         getChart($("input[name='x-axis']:checked").val(),$(this).attr('value'))
     })
-
 });
 
-
-    
+function callbackCEPDATA()
+{
+    alert('called')
+}
