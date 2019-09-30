@@ -7002,7 +7002,7 @@ button.bg-light:focus {
   background-image: url("../img/bg.jpg") !important;
   background-position: 50% 50% !important;
   background-repeat: no-repeat !important;
-  
+  background-size: cover;
 
 }
 
