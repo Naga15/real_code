@@ -6992,8 +6992,8 @@ button.bg-light:focus {
 
 }
 .bg-blue {
-  /*background-color: #0069d9 !important;*/
-  background-color: #fff !important;
+  background-color: #0069d9 !important;
+  /*background-color: #fff !important;*/
   border-bottom: 1px solid #e9ecef;
 
 }
