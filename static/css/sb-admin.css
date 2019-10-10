@@ -6997,6 +6997,9 @@ button.bg-light:focus {
   border-bottom: 1px solid #e9ecef;
 
 }
+.fa, .fas {
+    color: white;
+}
 
 .bg-dark-bg {
   background-image: url("../img/bg.jpg") !important;
