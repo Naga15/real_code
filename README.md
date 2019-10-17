@@ -72,4 +72,17 @@ commands for running on server
    sudo chown www-data:www-data db.sqlite3
    python3 manage.py  makemigrations
    sudo systemctl restart apache2
+   
+   
+   Here is the feedback summary for the Chassis History Web App:
+1.	Change Paccar Solutions logo by just Paccar or PTC
+2.	Next to the logo, put the title for the project “Chassis History”
+3.	Remove the three lines icon next to the logo
+4.	Put the vehicle information on the Dashboard panel. Allow the panel to expand or collapse.
+5.	Make the filter section smaller and give more space to the graphic. Avoid scrolling the page.
+6.	Remove title for the filer or change the title (For Filter with chassis ID / ESN, changed by Search. For Filter Axis, changed by Chart axis configuration).
+7.	Move the Y Axis, next to the X axis to have more space. Put some line separator between x Axis and y Axis.
+8.	Replace PACCAR Solution by Paccar Technical Center at the bottom of the page. The copyright should be the footer bar that extend all the page and it should have a slightly different color with a line at the top.
+9.	Add the user name next to the user icon at the top bar. When the icon is clicked, remove the setting option.
+
 ```
