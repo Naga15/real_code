@@ -75,7 +75,7 @@ commands for running on server
    
    
    Here is the feedback summary for the Chassis History Web App:
-1.	Change Paccar Solutions logo by just Paccar or PTC
+1.	Change Paccar Solutions logo by just Paccar or PaccarTechnicalCenter
 2.	Next to the logo, put the title for the project “Chassis History”
 3.	Remove the three lines icon next to the logo
 4.	Put the vehicle information on the Dashboard panel. Allow the panel to expand or collapse.
