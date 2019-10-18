@@ -8,31 +8,31 @@
 {% block content %}
 
 <!-- Icon Cards-->
-<form method="POST" id="search-form">
-<div class="row">
+<form method="POST" id="search-form" style="font-size: 14px;">
+<div class="row mx-auto">
 		{% csrf_token %}
-		<div class="col-lg-6">
-		  <div class="card" style="height: 250px !important;">
-				<div class="card-header">Filter With Chassis ID / ESN</div>
+		<div class="col-lg-5">
+		  <div class="card" style="height: 130px !important;">
+				<!--<div class="card-header">Search</div>-->
 				<div class="card-body">
 					<div class="form-group">
 						<div class="form-row">
 						<div class="col-md-6">
 							<div class="form-group">
 									<label >Chassis ID / ESN</label>
-									<input type="text" id="search" name="search" class="form-control" placeholder="Search by Chassis ID / ESN" value="{{filter_search}}">
+									<input style="font-size: 14px;" type="text" id="search" name="search" class="form-control" placeholder="Search by Chassis ID / ESN" value="{{filter_search}}">
 								</div>
 								<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only">
-										<label class="custom-control-label" for="defaultUnchecked">Engine Only</label>
+										<input style="font-size: 14px;"type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only">
+										<label style="font-size: 14px;" class="custom-control-label" for="defaultUnchecked">Engine Only</label>
 								</div>
 							</div>
 							<div class="col-md-6">
 									<div class="form-group">
 										<label>&nbsp;</label>
 										<br>
-										<button type="submit" class="btn btn-primary">Search</button>
-										<button type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
+										<button style="font-size: 14px;" type="submit" class="btn btn-primary">Search</button>
+										<button style="font-size: 14px;" type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
 									</div>
 								</div>
 						</div>
@@ -42,53 +42,65 @@
 		</div>
 
 
-		<div class="col-lg-6">
-		  <div class="card" style="height: 250px !important;">
-					<div class="card-header">Filter Axis</div>
+		<div class="col-lg-7">
+		  <div class="card" style="height: 130px !important;">
+					<!--<div class="card-header">Chart axis configuration</div>-->
 					<div class="card-body">
 						<div class="form-group">
 							<div class="form-row">
 								<div class="col-md-12">
-										<label >X Axis</label>
+										
 										<div class="form-group">
-												<!-- Default inline 1-->
-												<div class="custom-control custom-radio custom-control-inline ">
-													<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" {% if filter_x_axis == 'Day' %} checked {% endif %}>
-													<label class="custom-control-label" for="x-axis-1">Day</label>
-												</div>
+												<div class="form-row">
+														
+														<div class="col-md-6">
+																<label >X Axis</label> 
+																<div class="form-group">
+																<!-- Default inline 1-->
+															<div class="custom-control custom-radio custom-control-inline ">
+																	<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" {% if filter_x_axis == 'Day' %} checked {% endif %}>
+																	<label class="custom-control-label" for="x-axis-1">Day</label>
+																</div>
+																
+																<!-- Default inline 2-->
+																<div class="custom-control custom-radio custom-control-inline">
+																	<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week" {% if filter_x_axis == 'Week' %} checked {% endif %}>
+																	<label class="custom-control-label" for="x-axis-2">Week</label>
+																</div>
+																
+																<!-- Default inline 3-->
+																<div class="custom-control custom-radio custom-control-inline">
+																	<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month" {% if filter_x_axis == 'Month' %} checked {% endif %}>
+																	<label class="custom-control-label" for="x-axis-3">Month</label>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-6">
+																<label >Y Axis</label>
+																<div class="form-group">
+																	<div class="custom-control custom-radio custom-control-inline">
+																		<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" {% if filter_y_axis == 'Miles' %} checked {% endif %}>
+																		<label class="custom-control-label" for="y-axis-1">Miles</label>
+																	</div>
+																	
+																	<!-- Default inline 2-->
+																	<div class="custom-control custom-radio custom-control-inline">
+																		<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours" {% if filter_y_axis == 'Hours' %} checked {% endif %}>
+																		<label class="custom-control-label" for="y-axis-2">Hours</label>
+																	</div>
+																	
+																	<!-- Default inline 3-->
+																	<div class="custom-control custom-radio custom-control-inline">
+																		<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km" {% if filter_y_axis == 'Km' %} checked {% endif %}>
+																		<label class="custom-control-label" for="y-axis-3">Km</label>
+																	</div>
+																</div>
+														</div>
+												</div>			
 												
-												<!-- Default inline 2-->
-												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week" {% if filter_x_axis == 'Week' %} checked {% endif %}>
-													<label class="custom-control-label" for="x-axis-2">Week</label>
-												</div>
-												
-												<!-- Default inline 3-->
-												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month" {% if filter_x_axis == 'Month' %} checked {% endif %}>
-													<label class="custom-control-label" for="x-axis-3">Month</label>
-												</div>
 										</div>
 
-										<label >Y Axis</label>
-										<div class="form-group">
-											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" {% if filter_y_axis == 'Miles' %} checked {% endif %}>
-												<label class="custom-control-label" for="y-axis-1">Miles</label>
-											</div>
-											
-											<!-- Default inline 2-->
-											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours" {% if filter_y_axis == 'Hours' %} checked {% endif %}>
-												<label class="custom-control-label" for="y-axis-2">Hours</label>
-											</div>
-											
-											<!-- Default inline 3-->
-											<div class="custom-control custom-radio custom-control-inline">
-												<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km" {% if filter_y_axis == 'Km' %} checked {% endif %}>
-												<label class="custom-control-label" for="y-axis-3">Km</label>
-											</div>
-										</div>
+										
 								</div>
 							</div>
 						</div>
@@ -106,12 +118,12 @@
 
 <!-- Area Chart Example-->
 <div class="row">
-		{% if isData == 'Yes'%}
+		
 		
 		<div class="col-lg-4">
 			<div class="card mb-3">
-				<div class="card-header">Vehicle Information</div>
-				<div class="card-body">
+				<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">Vehicle Information</div>
+				<div class="card-body collapse show" id="vinfo">
 						<div class="form-group">
 								<label >Chassis ID: {{data.Chassis}}</label>
 						</div>
@@ -172,12 +184,13 @@
 				</div>
 				<div class="card-body" id="data-test">
 					<div id="chart-section">
+							{% if isData != 'Yes'%} No Data {% endif %}
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		{% else %}
+		<!--{% if isData != 'Yes'%}
 
 			<div class="col-lg-12">
 					<div class="alert alert-primary" role="alert">
@@ -185,7 +198,7 @@
 					</div>
 			</div>
 
-		{% endif %}
+		{% endif %}-->
 
 
 </div>
