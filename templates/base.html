@@ -20,24 +20,47 @@
   <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
 
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  
+<style>
+
+.card-header a{
+  font-size: 1rem;
+  color: black;
+  font-weight: normal;
+}
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+  color: black;
+}
+.card-header .collapsed .fa {
+  transform: rotate(90deg);
+}
+
+#vinfo {
+  font-size: 14px;
+}
+</style>
 </head>
 
 <body id="page-top">
 
   <nav class="navbar navbar-expand navbar-dark bg-blue static-top">
 
-    <a class="navbar-brand mr-1" href="/dashboard">
+    <a class="navbar-brand mr-1" href="/dashboard"> 
       <!--<img src="{% static 'img/logo1.png' %}"></div>-->
       
         <div class="text-center">
-          <h2 style="font-style: italic;color: white;text-shadow: 2px 2px 4px darkblue;">
-            Paccar Technical Center <small>Chassis History</small>
+          <h2 style="font-style: italic;color: white;text-shadow: 2px 2px 4px darkblue;font-size: 18px;">
+            Paccar Technical Center
           </h2>
           
         </div>
     </a>
-
+    <div class="d-inline text-center" style="margin-left:30%">
+        <small style="font-style: italic;color: white;text-shadow: 2px 2px 4px darkblue;font-size: 24px;">
+            Chassis History
+        </small>
+        
+      </div>
     <!--<button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
     </button>-->
@@ -66,12 +89,73 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="sidebar navbar-nav">
+    <ul class="sidebar navbar-nav" id="mainNav">
       <li class="nav-item active">
         <a class="nav-link" href="/dashboard">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <i class="fas fa-fw fa-tachometer-alt" style="color: black;"></i>
           <span>Dashboard</span>
         </a>
+      </li>
+      <li class="nav-item">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-3">
+                  <!--<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">
+                    Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
+                  </div>-->
+                  <h5 class="card-header">
+                   <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="heading-vinfo" class="d-block">
+                      
+                      Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
+                   </a>
+                  </h5>
+                  <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
+                      <div class="card-body">
+                      <div class="form-group">
+                          <label >Chassis ID: {{data.Chassis}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >ESN : {{data.ESN}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Engine Family : {{data.Engine_Family}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Model Year : {{data.Model_Year}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >HP Rating : {{data.HP_Rating}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Truck Model : {{data.Truck_Model}}</label>
+                      </div>
+          
+                      <div class="form-group">
+                          <label >Current Software Level : {{data.Current_Software_Level}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Last Software Level : {{data.Last_Software_Level}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >Mileage : {{data.plantdata.Mileage}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
       </li>
     </ul>
 
@@ -90,9 +174,9 @@
       <!-- /.container-fluid -->
 
       <!-- Sticky Footer -->
-      <footer class="sticky-footer" style="border-top: dotted 1px gray;color: gray;">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
+      <footer class="sticky-footer" style="border-top: dotted 1px orange;color: gray;">
+        <div class="container" style="margin-top:2%;">
+          <div class="copyright text-center my-auto font-weight-bold">
             <span>Copyright © Paccar Technical Center {% now 'Y' %}</span>
           </div>
         </div>
@@ -122,6 +206,16 @@
   <!-- Common.js-->
   <script src="{% static 'js/common.js' %}"></script>
 
+  <script>
+      $('#vinfo').on('hidden.bs.collapse', function () {
+        // do something…
+        console.log('call');
+      })
+      $('#vinfo').on('shown.bs.collapse', function () {
+        // do something…
+        console.log('call2');
+      })
+  </script>
 </body>
 
 </html>
