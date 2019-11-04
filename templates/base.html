@@ -32,7 +32,7 @@
   color: black;
 }
 .card-header .collapsed .fa {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 #vinfo {
@@ -90,13 +90,8 @@
 
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav" id="mainNav">
+
       <li class="nav-item active">
-        <a class="nav-link" href="/dashboard">
-          <i class="fas fa-fw fa-tachometer-alt" style="color: black;"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card mb-3">
@@ -104,9 +99,9 @@
                     Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
                   </div>-->
                   <h5 class="card-header">
-                   <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="heading-vinfo" class="d-block">
-                      
-                      Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
+                   <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="sidebarToggle" class="d-block">
+                    <img src="{% static 'img/front-truck.png' %}" style="height: 20px">
+                      Vehicle Information&nbsp;<i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
                    </a>
                   </h5>
                   <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
@@ -193,6 +188,22 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
+<style type="text/css">
+.sidebar.toggled {
+    overflow: visible;
+    width: 175px !important;
+}
+.sidebar {
+    overflow: visible;
+    width: 285px !important;
+}
+footer.sticky-footer {
+    width: calc(100% - 285px);
+}
+body.sidebar-toggled footer.sticky-footer {
+    width: calc(100% - 175px);
+}
+</style>
   <!-- Bootstrap core JavaScript-->
   <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
