@@ -28,7 +28,7 @@ import pdfkit
 from django.template import Context
 
 
-db_logger = logging.getLogger('django_auth_ldap')
+db_logger = logging.getLogger('django_warrant')
 
 #login 
 def login_view(request):
@@ -38,17 +38,22 @@ def login_view(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                if user.is_active:
-                    #login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-                    login(request, user)
-                    return redirect('/dashboard')
+            try:
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    if user.is_active:
+                        login(request, user)
+                        return redirect('/dashboard')
+                    else:
+                        messages.error(request, "'"+str(username)+"' is Inactive Username.")
+                        return redirect('/login')
                 else:
-                    messages.error(request, "'"+str(username)+"' is Inactive Username.")
-                    return redirect('/login')
-            else:
-                messages.error(request, "'"+str(username)+"' is not found.")
+                    db_logger.warning('User login error : '+str(user))
+                    messages.error(request, "'"+str(username)+"' is not found.")
+                    return redirect('/')
+            except Exception as e:
+                db_logger.exception(e)
+                messages.error(request, str(e))
                 return redirect('/')
     else:
             form = LoginForm()
@@ -88,6 +93,7 @@ def dashboard(request):
                     I_Array     = []
                     X_Array     = []
                     Y_Array     = []
+                    FT_Array    = []
                     hovertext   = []
                     for service in services:
                         I_Array.append(str(service.token))
@@ -111,12 +117,15 @@ def dashboard(request):
                         else:
                             Y_Array.append(service.Mileage)
 
-                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a>'+str(service.get_FormType_display())+'</a><br>')
+                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br>')
+                        FT_Array.append(service.get_FormType_display())
+
                     context['data']         = info
                     context['X_Array']      = json.dumps(X_Array)
                     context['Y_Array']      = json.dumps(Y_Array)
                     context['I_Array']      = json.dumps(I_Array)
                     context['hovertext']    = json.dumps(hovertext)
+                    context['FT_Array']     = json.dumps(FT_Array)
                     isData = 'Yes'
             else:
                 DefaultMessage = 'Vehicle Information not found, Please try with other Chassis ID / ESN.'
@@ -131,9 +140,12 @@ def dashboard(request):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def service(request,token):
+    context = {}
     service = Service.objects.filter(token = token).first()
     if service:
-        html_body = render_to_string('service.html', context={})
+        formname = 'form/'+str(service.FormType)+'.html'
+        context['service'] = service
+        html_body = render_to_string(formname, context)
         return HttpResponse(html_body)
     else:
         return HttpResponse('Invalid Request')
@@ -172,7 +184,7 @@ def export_to_csv(request,token,x_axis,y_axis):
                 else:
                     Y_Array.append(service.Mileage)
 
-                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">CEP Data</a>')
+                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">'+str(service.get_FormType_display())+'</a>')
 
         response = HttpResponse(content_type='text/csv')
         filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())
@@ -197,27 +209,58 @@ def export_to_pdf(request,token,x_axis,y_axis):
             X_Array     = []
             Y_Array     = []
             hovertext   = []
+            annotations = []
             for service in services:
+                annotation = {}
                 I_Array.append(str(service.token))
                 #filter by X Axis
                 if x_axis == 'Week':
-                    X_Array.append('Week '+str(service.Service_Date.strftime("%w %b %Y")))
+                    x = 'Week '+str(service.Service_Date.strftime("%w %b %Y"))
+                    X_Array.append(x)
                 elif x_axis == 'Month':
-                    X_Array.append(service.Service_Date.strftime("%b %Y"))
+                    x = 'Week '+str(service.Service_Date.strftime("%b %Y"))
+                    X_Array.append(x)
                 else:
-                    X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
+                    x = 'Week '+str(service.Service_Date.strftime("%d %b, %Y"))
+                    X_Array.append(x)
+
                 #filter by Y Axis
                 if y_axis == 'Hours':
                     km = service.Mileage * 1.60934
                     hours = km * 0.62
-                    Y_Array.append(round(hours))
+                    y = round(hours)
+                    Y_Array.append(y)
                 elif y_axis == 'Km':
                     km = service.Mileage * 1.60934
-                    Y_Array.append(round(km))
+                    y = round(km)
+                    Y_Array.append(y)
                 else:
-                    Y_Array.append(service.Mileage)
+                    y = service.Mileage
+                    Y_Array.append(y)
 
-                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">CEP Data</a>')
+                text = 'Engine Build <br> Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">'+str(service.get_FormType_display())+'</a>'    
+                hovertext.append(text)
+
+                annotation['x']             = x
+                annotation['y']             = y+250
+                annotation['align']         = 'center'
+                annotation['arrowcolor']    = '#636363'
+                annotation['arrowhead']     = 2
+                annotation['arrowsize']     = 1
+                annotation['arrowwidth']    = 2
+                annotation['text']          = text
+                annotation['showarrow']     = True
+                annotation['ax']            = 0
+                annotation['ay']            = -100
+                annotation['bordercolor']   = '#c7c7c7'
+                annotation['borderpad']     = 4
+                annotation['borderwidth']   = 2
+                annotation['bgcolor']       = '#ff7f0e'
+                annotation['font']          = dict(size=14,color="#ffffff")
+                annotation['opacity']       = 0.8
+                annotations.append(annotation)
+                
+                 
     
         data = [go.Scatter(x=X_Array, y=Y_Array, mode='lines+markers', text=hovertext, textposition='top center')]
         config   = {'scrollZoom': False,'displayModeBar': False,'editable': False}    
@@ -231,7 +274,8 @@ def export_to_pdf(request,token,x_axis,y_axis):
             yaxis=dict(
                 title=str(y_axis),showgrid=False, zeroline=False
             )
-            ,margin=go.layout.Margin( l=30, r=30, b=10, t=50, pad=5 )
+            ,margin=go.layout.Margin( l=30, r=30, b=10, t=50, pad=5 ),
+            annotations=annotations
         )
 
         filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())+'.pdf'
@@ -243,7 +287,7 @@ def export_to_pdf(request,token,x_axis,y_axis):
                             show_link=False,
                             output_type='div', include_plotlyjs=True)
 
-        opt = {'javascript-delay': 1000,'no-stop-slow-scripts': None,'debug-javascript': None}
+        opt = {'javascript-delay': 5000,'no-stop-slow-scripts': None,'debug-javascript': None}
         pdfkit.from_string(fig, 'media/pdf/'+str(filename), options=opt)
         pdf = open('media/pdf/'+str(filename), 'rb')
         response = HttpResponse(pdf.read(), content_type='application/pdf')  # Generates the response as pdf response.

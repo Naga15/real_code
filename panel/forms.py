@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=TextInput(attrs={'placeholder': 'Username'}),label='Username',initial='riemann')
-    password = forms.CharField(widget=PasswordInput(attrs={'placeholder':'Password'}),initial='password')
+    username = forms.CharField(widget=TextInput(attrs={'placeholder': 'Username'}),initial='test1')
+    password = forms.CharField(widget=PasswordInput(attrs={'placeholder':'Password'}),initial='Pass@123')
     
       
     def clean(self, *args, **kwargs):
