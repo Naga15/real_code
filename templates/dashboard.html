@@ -344,15 +344,27 @@ function getRandomColor()
 
 function PrintPlot() 
 {
+	/*
 	var divToPrint	=	document.getElementById("data-test");
 	var mywindow 		= window.open('', 'data-test');
 	mywindow.document.write('<html><head><title>{{data.Chassis}} Chassis History</title>');
 	mywindow.document.write('</head><body >');
-	mywindow.document.write(divToPrint.outerHTML);
+	mywindow.document.write(divToPrint.innerHTML);
 	mywindow.document.write('</body></html>');
 	mywindow.print();
 	mywindow.close();
+		*/
+
+	printDiv('data-test');
 }
+function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+     document.body.innerHTML = printContents;
+     window.print();
+     document.body.innerHTML = originalContents;
+}
+
 
 function downloadPDF() 
 {
