@@ -22,13 +22,16 @@ from datetime import datetime
 import json
 import csv
 
+import psycopg2
+
 import logging
 
 import pdfkit
 from django.template import Context
+from dateutil.parser import parse
 
 
-db_logger = logging.getLogger('django_warrant')
+db_logger = logging.getLogger('django_auth')
 
 #login 
 def login_view(request):
@@ -43,13 +46,15 @@ def login_view(request):
                 if user is not None:
                     if user.is_active:
                         login(request, user)
+                        db_logger.info('User Login : '+str(username)+' is successfully login.')
                         return redirect('/dashboard')
                     else:
-                        messages.error(request, "'"+str(username)+"' is Inactive Username.")
+                        db_logger.warning('User Login : '+str(username)+' is inactive Username.')
+                        messages.error(request, "'"+str(username)+"' is inactive Username.")
                         return redirect('/login')
                 else:
-                    db_logger.warning('User login error : '+str(user))
-                    messages.error(request, "'"+str(username)+"' is not found.")
+                    db_logger.warning('User Login : '+str(username)+' is invalid username.')
+                    messages.error(request, "'"+str(username)+"' is invalid username.")
                     return redirect('/')
             except Exception as e:
                 db_logger.exception(e)
@@ -65,6 +70,7 @@ def login_view(request):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 def logout_view(request):
     try:
+        db_logger.info('User Logout : '+str(request.user.username)+' is successfully logout.')
         logout(request)
         return redirect('/login')
     except Exception as e:
@@ -74,6 +80,7 @@ def logout_view(request):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
+    print(settings.AUTHENTICATION_DATABASE_NAME)
     context = {}
     filter_search = ''
     filter_x_axis = 'Day'
@@ -85,50 +92,63 @@ def dashboard(request):
         filter_x_axis = request.POST.get('x-axis')
         filter_y_axis = request.POST.get('y-axis')
         if filter_search != '':
-            info = CEPData.objects.filter(Chassis = filter_search).first()
-            if info:
-                service_count = info.service_set.count()
-                if service_count > 0: 
-                    services    = info.service_set.all()
-                    I_Array     = []
-                    X_Array     = []
-                    Y_Array     = []
-                    FT_Array    = []
-                    hovertext   = []
-                    for service in services:
-                        I_Array.append(str(service.token))
-                        #X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
-                        #Y_Array.append(service.Mileage)
-                        #filter by X Axis
-                        if filter_x_axis == 'Week':
-                            X_Array.append('Week '+str(service.Service_Date.strftime("%w %b %Y")))
-                        elif filter_x_axis == 'Month':
-                            X_Array.append(service.Service_Date.strftime("%b %Y"))
-                        else:
-                            X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
-                        #filter by Y Axis
-                        if filter_y_axis == 'Hours':
-                            km = service.Mileage * 1.60934
-                            hours = km * 0.62
-                            Y_Array.append(round(hours))
-                        elif filter_y_axis == 'Km':
-                            km = service.Mileage * 1.60934
-                            Y_Array.append(round(km))
-                        else:
-                            Y_Array.append(service.Mileage)
 
-                        hovertext.append('Engine Build<br>Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br>')
-                        FT_Array.append(service.get_FormType_display())
+            con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+            cursor=con.cursor()
+            cursor.execute(""" select 
+                                        chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
+                                from 
+                                        fact_timeline
+                                        join dim_event on fact_timeline.eventid = dim_event.eventid
+                                where
+                                        chassisid = '%s'
+                                order by
+                                        timedate ASC
+                            """% (filter_search))
+            df=cursor.fetchall()
+            cursor.close()
+            if df:
+                I_Array     = []
+                X_Array     = []
+                Y_Array     = []
+                FT_Array    = []
+                hovertext   = []
+                for record in df:
+                    p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+                    timedate = parse(p['timedate'])
+                    I_Array.append(str(p['eventid']))
+                    if filter_x_axis == 'Week':
+                        timedate = timedate.strftime("%w %b %Y")
+                        X_Array.append('Week '+str(timedate))
+                    elif filter_x_axis == 'Month':
+                        timedate = timedate.strftime("%b %Y")
+                        X_Array.append(timedate)
+                    else:
+                        timedate = timedate.strftime("%m/%d/%Y")
+                        X_Array.append(timedate)
+                    #filter by Y Axis
+                    if filter_y_axis == 'Hours':
+                        hours = p['enginehours']
+                        Y_Array.append(hours)
+                    elif filter_y_axis == 'Km':
+                        km = p['mileagekm']
+                        Y_Array.append(km)
+                    else:
+                        Y_Array.append(p['mileage'])
 
-                    context['data']         = info
-                    context['X_Array']      = json.dumps(X_Array)
-                    context['Y_Array']      = json.dumps(Y_Array)
-                    context['I_Array']      = json.dumps(I_Array)
-                    context['hovertext']    = json.dumps(hovertext)
-                    context['FT_Array']     = json.dumps(FT_Array)
-                    isData = 'Yes'
+                    hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(p['enginehours'])+'<br>')
+                    FT_Array.append(p['eventdesc'])
+
+                context['data']         = []
+                context['X_Array']      = json.dumps(X_Array)
+                context['Y_Array']      = json.dumps(Y_Array)
+                context['I_Array']      = json.dumps(I_Array)
+                context['hovertext']    = json.dumps(hovertext)
+                context['FT_Array']     = json.dumps(FT_Array)
+                isData = 'Yes'
             else:
                 DefaultMessage = 'Vehicle Information not found, Please try with other Chassis ID / ESN.'
+
     context['filter_search'] = filter_search
     context['filter_x_axis'] = filter_x_axis
     context['filter_y_axis'] = filter_y_axis
@@ -141,10 +161,29 @@ def dashboard(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def service(request,token):
     context = {}
-    service = Service.objects.filter(token = token).first()
-    if service:
-        formname = 'form/'+str(service.FormType)+'.html'
-        context['service'] = service
+    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+    cursor=con.cursor()
+    cursor.execute("select * from dim_event where eventid = %s;" % (token))
+    df=cursor.fetchone()
+    cursor.close()
+    if df:
+        eventname   = df[1]
+        if(eventname == 'Engine Build'):
+            formname = 'form/Case.html'
+        elif(eventname == 'Chassis Build'):
+            formname = 'form/Case.html'
+        elif(eventname == 'Warranty Claim'):
+            formname = 'form/Case.html'
+        elif(eventname == 'service'):
+            formname = 'form/Case.html'
+        elif(eventname == 'basic W'):
+            formname = 'form/Case.html'
+        elif(eventname == 'basicE'):
+            formname = 'form/Case.html'
+        else:
+            formname = 'form/Case.html'
+        context['service'] = df
+        context['title'] = df[1]
         html_body = render_to_string(formname, context)
         return HttpResponse(html_body)
     else:
@@ -155,39 +194,51 @@ def service(request,token):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_csv(request,token,x_axis,y_axis):
-    info = CEPData.objects.filter(token = token).first()
-    if info:
-        service_count = info.service_set.count()
-        if service_count > 0: 
-            services    = info.service_set.all()
-            I_Array     = []
-            X_Array     = []
-            Y_Array     = []
-            hovertext   = []
-            for service in services:
-                I_Array.append(str(service.token))
-                #filter by X Axis
-                if x_axis == 'Week':
-                    X_Array.append('Week '+str(service.Service_Date.strftime("%w %b %Y")))
-                elif x_axis == 'Month':
-                    X_Array.append(service.Service_Date.strftime("%b %Y"))
-                else:
-                    X_Array.append(service.Service_Date.strftime("%d %b, %Y"))
-                #filter by Y Axis
-                if y_axis == 'Hours':
-                    km = service.Mileage * 1.60934
-                    hours = km * 0.62
-                    Y_Array.append(round(hours))
-                elif y_axis == 'Km':
-                    km = service.Mileage * 1.60934
-                    Y_Array.append(round(km))
-                else:
-                    Y_Array.append(service.Mileage)
+    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+    cursor=con.cursor()
+    cursor.execute(""" select 
+                                chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
+                        from 
+                                fact_timeline
+                                join dim_event on fact_timeline.eventid = dim_event.eventid
+                        where
+                                chassisid = '%s'
+                        order by
+                                timedate ASC
+                    """% (token))
+    df=cursor.fetchall()
+    cursor.close()
+    if df:
+        X_Array     = []
+        Y_Array     = []
+        hovertext   = []
+        for record in df:
+            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+            timedate = parse(p['timedate'])
+            #filter by X Axis
+            if x_axis == 'Week':
+                timedate = timedate.strftime("%w %b %Y")
+                X_Array.append('Week '+str(timedate))
+            elif x_axis == 'Month':
+                timedate = timedate.strftime("%b %Y")
+                X_Array.append(timedate)
+            else:
+                timedate = timedate.strftime("%m/%d/%Y")
+                X_Array.append(timedate)
+            #filter by Y Axis
+            if y_axis == 'Hours':
+                hours = p['enginehours']
+                Y_Array.append(hours)
+            elif y_axis == 'Km':
+                km = p['mileagekm']
+                Y_Array.append(km)
+            else:
+                Y_Array.append(p['mileage'])
 
-                hovertext.append('Engine Build /n Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">'+str(service.get_FormType_display())+'</a>')
-
+            hovertext.append(str(p['eventdesc'])+' /n Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours']))
+        
         response = HttpResponse(content_type='text/csv')
-        filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())
+        filename = str(token)+'-Chassis-History-'+str(datetime.now())
         response['Content-Disposition'] = 'attachment; filename="'+str(filename)+'.csv"'
         writer = csv.writer(response)
         writer.writerow([x_axis, y_axis])
@@ -200,72 +251,56 @@ def export_to_csv(request,token,x_axis,y_axis):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_pdf(request,token,x_axis,y_axis):
-    info = CEPData.objects.filter(token = token).first()
-    if info:
-        service_count = info.service_set.count()
-        if service_count > 0: 
-            services    = info.service_set.all()
-            I_Array     = []
-            X_Array     = []
-            Y_Array     = []
-            hovertext   = []
-            annotations = []
-            for service in services:
-                annotation = {}
-                I_Array.append(str(service.token))
-                #filter by X Axis
-                if x_axis == 'Week':
-                    x = 'Week '+str(service.Service_Date.strftime("%w %b %Y"))
-                    X_Array.append(x)
-                elif x_axis == 'Month':
-                    x = 'Week '+str(service.Service_Date.strftime("%b %Y"))
-                    X_Array.append(x)
-                else:
-                    x = 'Week '+str(service.Service_Date.strftime("%d %b, %Y"))
-                    X_Array.append(x)
+    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+    cursor=con.cursor()
+    cursor.execute(""" select 
+                                chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
+                        from 
+                                fact_timeline
+                                join dim_event on fact_timeline.eventid = dim_event.eventid
+                        where
+                                chassisid = '%s'
+                        order by
+                                timedate ASC
+                    """% (token))
+    df=cursor.fetchall()
+    cursor.close()
+    if df:
+        X_Array     = []
+        Y_Array     = []
+        hovertext   = []
+        for record in df:
+            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+            timedate = parse(p['timedate'])
+            #filter by X Axis
+            if x_axis == 'Week':
+                timedate = timedate.strftime("%w %b %Y")
+                X_Array.append('Week '+str(timedate))
+            elif x_axis == 'Month':
+                timedate = timedate.strftime("%b %Y")
+                X_Array.append(timedate)
+            else:
+                timedate = timedate.strftime("%m/%d/%Y")
+                X_Array.append(timedate)
+            
+            if y_axis == 'Hours':
+                hours = p['enginehours']
+                Y_Array.append(hours)
+            elif y_axis == 'Km':
+                km = p['mileagekm']
+                Y_Array.append(km)
+            else:
+                Y_Array.append(p['mileage'])
 
-                #filter by Y Axis
-                if y_axis == 'Hours':
-                    km = service.Mileage * 1.60934
-                    hours = km * 0.62
-                    y = round(hours)
-                    Y_Array.append(y)
-                elif y_axis == 'Km':
-                    km = service.Mileage * 1.60934
-                    y = round(km)
-                    Y_Array.append(y)
-                else:
-                    y = service.Mileage
-                    Y_Array.append(y)
+            #text = str(p['eventdesc'])+' /n Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours'])
+            text = str(p['eventdesc'])
+            hovertext.append(text)
 
-                text = 'Engine Build <br> Date : '+str(service.Service_Date.strftime("%d %b, %Y"))+'<br>Week : 0<br>Calendar Week : 5<br>Hours : 120<br><a href="">'+str(service.get_FormType_display())+'</a>'    
-                hovertext.append(text)
-
-                annotation['x']             = x
-                annotation['y']             = y+250
-                annotation['align']         = 'center'
-                annotation['arrowcolor']    = '#636363'
-                annotation['arrowhead']     = 2
-                annotation['arrowsize']     = 1
-                annotation['arrowwidth']    = 2
-                annotation['text']          = text
-                annotation['showarrow']     = True
-                annotation['ax']            = 0
-                annotation['ay']            = -100
-                annotation['bordercolor']   = '#c7c7c7'
-                annotation['borderpad']     = 4
-                annotation['borderwidth']   = 2
-                annotation['bgcolor']       = '#ff7f0e'
-                annotation['font']          = dict(size=14,color="#ffffff")
-                annotation['opacity']       = 0.8
-                annotations.append(annotation)
-                
-                 
-    
-        data = [go.Scatter(x=X_Array, y=Y_Array, mode='lines+markers', text=hovertext, textposition='top center')]
+        
+        data = [go.Scatter(x=X_Array, y=Y_Array, mode='lines+markers', text=hovertext)]
         config   = {'scrollZoom': False,'displayModeBar': False,'editable': False}    
         layout = go.Layout(
-            title= str(info.Chassis)+' Chassis History',
+            title= str(token)+' Chassis History',
             width=1200,
             height=800,
             xaxis=dict(
@@ -274,11 +309,10 @@ def export_to_pdf(request,token,x_axis,y_axis):
             yaxis=dict(
                 title=str(y_axis),showgrid=False, zeroline=False
             )
-            ,margin=go.layout.Margin( l=30, r=30, b=10, t=50, pad=5 ),
-            annotations=annotations
+            ,margin=go.layout.Margin( l=30, r=30, b=10, t=50, pad=5 )
         )
 
-        filename = str(info.Chassis)+'-Chassis-History-'+str(datetime.now())+'.pdf'
+        filename = str(token)+'-Chassis-History-'+str(datetime.now())+'.pdf'
 
         fig = offline.plot({'data': data,
                             'layout': layout},
@@ -287,7 +321,7 @@ def export_to_pdf(request,token,x_axis,y_axis):
                             show_link=False,
                             output_type='div', include_plotlyjs=True)
 
-        opt = {'javascript-delay': 5000,'no-stop-slow-scripts': None,'debug-javascript': None}
+        opt = {'javascript-delay': 1000,'no-stop-slow-scripts': None,'debug-javascript': None}
         pdfkit.from_string(fig, 'media/pdf/'+str(filename), options=opt)
         pdf = open('media/pdf/'+str(filename), 'rb')
         response = HttpResponse(pdf.read(), content_type='application/pdf')  # Generates the response as pdf response.

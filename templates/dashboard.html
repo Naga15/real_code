@@ -115,62 +115,9 @@
 	</div>
 </form>
 	<br/>
-	
-	
-
-	 
 
 <!-- Area Chart Example-->
 <div class="row">
-		
-		
-		<!--<div class="col-lg-4">
-			<div class="card mb-3">
-				<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">Vehicle Information</div>
-				<div class="card-body collapse show" id="vinfo">
-						<div class="form-group">
-								<label >Chassis ID: {{data.Chassis}}</label>
-						</div>
-						<div class="form-group">
-								<label >ESN : {{data.ESN}}</label>
-						</div>
-						<div class="form-group">
-								<label >Engine Family : {{data.Engine_Family}}</label>
-						</div>
-						<div class="form-group">
-								<label >Model Year : {{data.Model_Year}}</label>
-						</div>
-						<div class="form-group">
-								<label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
-						</div>
-						<div class="form-group">
-								<label >HP Rating : {{data.HP_Rating}}</label>
-						</div>
-						<div class="form-group">
-								<label >Truck Model : {{data.Truck_Model}}</label>
-						</div>
-
-						<div class="form-group">
-								<label >Current Software Level : {{data.Current_Software_Level}}</label>
-						</div>
-						<div class="form-group">
-								<label >Last Software Level : {{data.Last_Software_Level}}</label>
-						</div>
-						<div class="form-group">
-								<label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
-						</div>
-						<div class="form-group">
-								<label >Mileage : {{data.plantdata.Mileage}}</label>
-						</div>
-						<div class="form-group">
-								<label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
-						</div>
-						<div class="form-group">
-								<label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
-						</div>
-				</div>
-			</div>
-		</div>-->
 		<div class="col-lg-12">
 			<div class="card mb-3">
 				<div class="card-header">
@@ -180,9 +127,8 @@
 					<div class="text-right">
 						{% if isData == 'Yes'%}
 						<button type="button" class="btn btn-secondary" onclick="PrintPlot()">Print</button>
-						<!--<button type="button" class="btn btn-secondary" onclick="downloadPDF()">PDF</button>-->
-						<a href="export-to-pdf/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">PDF</a>
-						<a href="export-to-csv/{{data.token}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">Export CSV</a>
+						<a href="export-to-pdf/{{filter_search}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">PDF</a>
+						<a href="export-to-csv/{{filter_search}}/{{filter_x_axis}}/{{filter_y_axis}}" class="btn btn-secondary">Export CSV</a>
 						{% endif %}
 					</div>
 				</div>
@@ -193,18 +139,6 @@
 				</div>
 			</div>
 		</div>
-		
-		<!--{% if isData != 'Yes'%}
-
-			<div class="col-lg-12">
-					<div class="alert alert-primary" role="alert">
-						{{DefaultMessage}}
-					</div>
-			</div>
-
-		{% endif %}-->
-
-
 </div>
 
 <!-- Modal -->
@@ -274,7 +208,7 @@ var myPlot = document.getElementById('chart-section'),
     layout = {
 		
 			showlegend: false,
-			annotations: annotations,
+			
 
 		hovermode:'closest',
 		autosize: true,
@@ -288,7 +222,7 @@ var myPlot = document.getElementById('chart-section'),
 			pad: 1
 		},
 		title: {
-			text:'{{data.Chassis}} Chassis History',
+			text:'{{filter_search}} Chassis History',
 		},
 		xaxis: {
 			title: {
@@ -305,11 +239,11 @@ var myPlot = document.getElementById('chart-section'),
 Plotly.newPlot('chart-section', data, layout,{scrollZoom: false, displayModeBar: false, editable: false})
 
 myPlot.on('plotly_click', function(data){
-    var token = '';
+  var token = '';
 	for(var i=0; i < data.points.length; i++)
 	{
         ClickIndex = data.points[i].pointIndex;
-		token = data.points[i].data.DID[ClickIndex];
+				token = data.points[i].data.DID[ClickIndex];
 	}
 	if(token)
 	{
@@ -344,17 +278,6 @@ function getRandomColor()
 
 function PrintPlot() 
 {
-	/*
-	var divToPrint	=	document.getElementById("data-test");
-	var mywindow 		= window.open('', 'data-test');
-	mywindow.document.write('<html><head><title>{{data.Chassis}} Chassis History</title>');
-	mywindow.document.write('</head><body >');
-	mywindow.document.write(divToPrint.innerHTML);
-	mywindow.document.write('</body></html>');
-	mywindow.print();
-	mywindow.close();
-		*/
-
 	printDiv('data-test');
 }
 function printDiv(divName) {
@@ -368,7 +291,7 @@ function printDiv(divName) {
 
 function downloadPDF() 
 {
-	Plotly.downloadImage(myPlot, { format: 'png', width: 800, height: 600, filename: '{{data.Chassis}}-Chassis-History' });
+	Plotly.downloadImage(myPlot, { format: 'png', width: 800, height: 600, filename: '{{filter_search}}-Chassis-History' });
 }
 
 </script>
