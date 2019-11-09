@@ -70,6 +70,8 @@ commands for running on server
    sudo chown www-data:www-data db.sqlite3
    python manage.py runserver 172.31.87.159:8000
    sudo chown www-data:www-data db.sqlite3
+   sudo apt-get install libpq-dev
+   pip3 install psycopg2
    python3 manage.py  makemigrations
    sudo systemctl restart apache2
    
