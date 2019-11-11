@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os, ldap
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType, LDAPSearchUnion
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMP_DIR = os.path.join(BASE_DIR, 'templates')
 
 
 # Quick-start development settings - unsuitable for production
@@ -57,7 +57,7 @@ ROOT_URLCONF = 'project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['./templates'],
+        'DIRS': [TEMP_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,20 +82,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-'''
-DATABASES = {
-    'default': {
-        #'ENGINE': 'django_redshift_backend',
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chassis',
-        'USER': 'reimann',
-        'PASSWORD': 'Manthan01',
-        'HOST': 'chassis-cluster.cmizplejoroy.us-east-1.redshift.amazonaws.com',
-        'PORT': '5439',
-    }
-}
-'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -141,19 +128,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #Authentication Information
-
 AUTHENTICATION_DATABASE_NAME    = 'chassis'
 AUTHENTICATION_HOST             = 'chassis-cluster.cmizplejoroy.us-east-1.redshift.amazonaws.com'
 AUTHENTICATION_USERNAME         = 'reimann'
 AUTHENTICATION_PASSWORD         = 'Manthan01'
 AUTHENTICATION_PORT             = '5439'
-'''
-AUTHENTICATION_DATABASE_NAME    = 'chassis'
-AUTHENTICATION_HOST             = '192.168.1.11'
-AUTHENTICATION_USERNAME         = 'e2excel'
-AUTHENTICATION_PASSWORD         = 'E2excel@2018'
-AUTHENTICATION_PORT             = '5432'
-'''
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

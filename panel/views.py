@@ -11,9 +11,9 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import Group, User
 from django.template.loader import get_template, render_to_string
 from .models import *
+from .vehicle import *
 
 import io
-
 import plotly.offline as offline
 from plotly.offline import plot
 import plotly.graph_objs as go
@@ -22,15 +22,19 @@ from datetime import datetime
 import json
 import csv
 
+import uuid 
 import psycopg2
-
-import logging
-
-import pdfkit
+#import pdfkit
 from django.template import Context
 from dateutil.parser import parse
 
 
+from pandas import DataFrame
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
+
+import logging
 db_logger = logging.getLogger('django_auth')
 
 #login 
@@ -80,7 +84,6 @@ def logout_view(request):
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
-    print(settings.AUTHENTICATION_DATABASE_NAME)
     context = {}
     filter_search = ''
     filter_x_axis = 'Day'
@@ -92,29 +95,16 @@ def dashboard(request):
         filter_x_axis = request.POST.get('x-axis')
         filter_y_axis = request.POST.get('y-axis')
         if filter_search != '':
-
-            con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
-            cursor=con.cursor()
-            cursor.execute(""" select 
-                                        chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
-                                from 
-                                        fact_timeline
-                                        join dim_event on fact_timeline.eventid = dim_event.eventid
-                                where
-                                        chassisid = '%s'
-                                order by
-                                        timedate ASC
-                            """% (filter_search))
-            df=cursor.fetchall()
-            cursor.close()
-            if df:
+            #search chassis
+            results = search_chassis_timeline(filter_search)
+            if results:
                 I_Array     = []
                 X_Array     = []
                 Y_Array     = []
                 FT_Array    = []
                 hovertext   = []
-                for record in df:
-                    p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+                for record in results:
+                    p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
                     timedate = parse(p['timedate'])
                     I_Array.append(str(p['eventid']))
                     if filter_x_axis == 'Week':
@@ -139,7 +129,7 @@ def dashboard(request):
                     hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(p['enginehours'])+'<br>')
                     FT_Array.append(p['eventdesc'])
 
-                context['data']         = []
+                context['data']         = chassis_information(filter_search)
                 context['X_Array']      = json.dumps(X_Array)
                 context['Y_Array']      = json.dumps(Y_Array)
                 context['I_Array']      = json.dumps(I_Array)
@@ -159,15 +149,12 @@ def dashboard(request):
 #get_chart
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def service(request,token):
+def service(request,chassisid, eventid):
     context = {}
-    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
-    cursor=con.cursor()
-    cursor.execute("select * from dim_event where eventid = %s;" % (token))
-    df=cursor.fetchone()
-    cursor.close()
-    if df:
-        eventname   = df[1]
+    #chassis event information
+    result = chassis_event_information(chassisid,eventid)
+    if result:
+        eventname   = result[1]
         if(eventname == 'Engine Build'):
             formname = 'form/Case.html'
         elif(eventname == 'Chassis Build'):
@@ -182,38 +169,26 @@ def service(request,token):
             formname = 'form/Case.html'
         else:
             formname = 'form/Case.html'
-        context['service'] = df
-        context['title'] = df[1]
+        context['service']  = result
+        context['title']    = result[1]
         html_body = render_to_string(formname, context)
         return HttpResponse(html_body)
     else:
         return HttpResponse('Invalid Request')
 
 
-#get_export_to_csv
+#Data export to csv
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_csv(request,token,x_axis,y_axis):
-    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
-    cursor=con.cursor()
-    cursor.execute(""" select 
-                                chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
-                        from 
-                                fact_timeline
-                                join dim_event on fact_timeline.eventid = dim_event.eventid
-                        where
-                                chassisid = '%s'
-                        order by
-                                timedate ASC
-                    """% (token))
-    df=cursor.fetchall()
-    cursor.close()
-    if df:
+    #search chassis
+    results = search_chassis_timeline(token)
+    if results:
         X_Array     = []
         Y_Array     = []
         hovertext   = []
-        for record in df:
-            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+        for record in results:
+            p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
             timedate = parse(p['timedate'])
             #filter by X Axis
             if x_axis == 'Week':
@@ -247,30 +222,18 @@ def export_to_csv(request,token,x_axis,y_axis):
                 writer.writerow([X_Array[x], Y_Array[x]])
         return response
 
-#export_to_pdf
+#data export to pdf
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_pdf(request,token,x_axis,y_axis):
-    con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
-    cursor=con.cursor()
-    cursor.execute(""" select 
-                                chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
-                        from 
-                                fact_timeline
-                                join dim_event on fact_timeline.eventid = dim_event.eventid
-                        where
-                                chassisid = '%s'
-                        order by
-                                timedate ASC
-                    """% (token))
-    df=cursor.fetchall()
-    cursor.close()
-    if df:
+    #search chassis
+    results = search_chassis_timeline(token)
+    if results:
         X_Array     = []
         Y_Array     = []
         hovertext   = []
-        for record in df:
-            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+        for record in results:
+            p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
             timedate = parse(p['timedate'])
             #filter by X Axis
             if x_axis == 'Week':
@@ -322,11 +285,87 @@ def export_to_pdf(request,token,x_axis,y_axis):
                             output_type='div', include_plotlyjs=True)
 
         opt = {'javascript-delay': 1000,'no-stop-slow-scripts': None,'debug-javascript': None}
-        pdfkit.from_string(fig, 'media/pdf/'+str(filename), options=opt)
+        #pdfkit.from_string(fig, 'media/pdf/'+str(filename), options=opt)
         pdf = open('media/pdf/'+str(filename), 'rb')
         response = HttpResponse(pdf.read(), content_type='application/pdf')  # Generates the response as pdf response.
         response['Content-Disposition'] = 'attachment; filename='+str(filename)
         pdf.close()
         return response  # returns the response.
+
+#data export to pdf
+@login_required(login_url="/login")  # - if not logged in redirect to /
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def export_to_pdf_new(request,token,x_axis,y_axis):
+    try:
+
+        #search chassis
+        results = search_chassis_timeline(token)
+        if results:
+            X_Array     = []
+            Y_Array     = []
+            hovertext   = []
+            for record in results:
+                p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
+                timedate = parse(p['timedate'])
+                #filter by X Axis
+                if x_axis == 'Week':
+                    timedate = timedate.strftime("%w %b %Y")
+                    X_Array.append('Week '+str(timedate))
+                elif x_axis == 'Month':
+                    timedate = timedate.strftime("%b %Y")
+                    X_Array.append(timedate)
+                else:
+                    timedate = timedate.strftime("%m/%d/%Y")
+                    X_Array.append(timedate)
+                
+                if y_axis == 'Hours':
+                    hours = p['enginehours'].strip()
+                    Y_Array.append(int(hours))
+                elif y_axis == 'Km':
+                    km = p['mileagekm'].strip()
+                    Y_Array.append(int(km))
+                else:
+                    mileage = p['mileage'].strip()
+                    if float(mileage).is_integer():
+                        mileage = int(mileage)
+                    else:
+                        mileage = float(mileage)
+                    Y_Array.append(mileage)
+
+                #text = str(p['eventdesc'])+' /n Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours'])
+                text = str(p['eventdesc'])
+                hovertext.append(text.strip())
         
-    
+        Data1 = {'x_axis': X_Array,'y_axis': Y_Array,'text': hovertext}
+        df1 = DataFrame(Data1,columns=['x_axis','y_axis','text'])
+        filename = str(token)+'-Chassis-History-'+str(uuid.uuid4())+'.pdf'
+
+        with PdfPages(r'media/pdf/'+str(filename)) as export_pdf:
+            
+            '''
+            for i,text in enumerate(hovertext):
+                x = X_Array[i]
+                y = Y_Array[i]
+                plt.plot(x, y, color='green', marker='o')
+                #txtlbl = text + '('+str(y)+')'
+                plt.text(x, y+3, str(y), fontsize=8)
+                #plt.plot(df1['x_axis'], df1['y_axis'], color='green', marker='o')
+            '''    
+
+            plt.plot(df1['x_axis'], df1['y_axis'], color='green', marker='o')
+            plt.title('Chassis Time Frame History of '+str(token), fontsize=10)
+            plt.xlabel(x_axis, fontsize=8)
+            plt.ylabel(y_axis, fontsize=8)
+            plt.grid(True)
+            export_pdf.savefig()
+            plt.close()
+        
+        pdf = open('media/pdf/'+str(filename), 'rb')
+        response = HttpResponse(pdf.read(), content_type='application/pdf')  # Generates the response as pdf response.
+        response['Content-Disposition'] = 'attachment; filename='+str(filename)
+        pdf.close()
+        return response  # returns the response.
+
+    except Exception as e:
+      db_logger.exception(e)
+      return []
