@@ -154,13 +154,14 @@ def service(request,chassisid, eventid):
     #chassis event information
     result = chassis_event_information(chassisid,eventid)
     if result:
-        eventname   = result[1]
+        eventname   = str(result[1].strip())
         if(eventname == 'Engine Build'):
             formname = 'form/Case.html'
         elif(eventname == 'Chassis Build'):
             formname = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
-            formname = 'form/Case.html'
+            context['results']  = chassis_claim_information(chassisid)
+            formname = 'form/Claim.html'
         elif(eventname == 'service'):
             formname = 'form/Case.html'
         elif(eventname == 'basic W'):
@@ -297,7 +298,7 @@ def export_to_pdf(request,token,x_axis,y_axis):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_pdf_new(request,token,x_axis,y_axis):
     try:
-
+        
         #search chassis
         results = search_chassis_timeline(token)
         if results:
@@ -307,6 +308,8 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
             for record in results:
                 p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
                 timedate = parse(p['timedate'])
+                testdate = p['timedate'].split(" ")
+                timedate = datetime.strptime(testdate[0], '%d/%m/%y')
                 #filter by X Axis
                 if x_axis == 'Week':
                     timedate = timedate.strftime("%w %b %Y")
@@ -315,15 +318,24 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
                     timedate = timedate.strftime("%b %Y")
                     X_Array.append(timedate)
                 else:
-                    timedate = timedate.strftime("%m/%d/%Y")
+                    #timedate = timedate.strftime("%Y %m %d")
+                    print(type(timedate))
                     X_Array.append(timedate)
                 
                 if y_axis == 'Hours':
-                    hours = p['enginehours'].strip()
-                    Y_Array.append(int(hours))
+                    mileage = p['enginehours'].strip()
+                    if float(mileage).is_integer():
+                        mileage = int(mileage)
+                    else:
+                        mileage = float(mileage)
+                    Y_Array.append(mileage)
                 elif y_axis == 'Km':
-                    km = p['mileagekm'].strip()
-                    Y_Array.append(int(km))
+                    mileage = p['mileagekm'].strip()
+                    if float(mileage).is_integer():
+                        mileage = int(mileage)
+                    else:
+                        mileage = float(mileage)
+                    Y_Array.append(mileage)
                 else:
                     mileage = p['mileage'].strip()
                     if float(mileage).is_integer():
@@ -332,30 +344,47 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
                         mileage = float(mileage)
                     Y_Array.append(mileage)
 
-                #text = str(p['eventdesc'])+' /n Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours'])
-                text = str(p['eventdesc'])
+                text = str(p['eventdesc'])+' <br/> Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours'])
                 hovertext.append(text.strip())
-        
+
         Data1 = {'x_axis': X_Array,'y_axis': Y_Array,'text': hovertext}
         df1 = DataFrame(Data1,columns=['x_axis','y_axis','text'])
         filename = str(token)+'-Chassis-History-'+str(uuid.uuid4())+'.pdf'
-
+        
+        '''
+        year            = [datetime(2001, 11, 2),datetime(2002, 11, 2),datetime(2003, 11, 2),datetime(2004, 11, 2),datetime(2005, 11, 2),datetime(2006, 11, 2),datetime(2007, 11, 2),datetime(2008, 11, 2),datetime(2009, 11, 2),datetime(2010, 11, 2),datetime(2011, 11, 2),datetime(2012, 11, 2),datetime(2013, 11, 2),datetime(2014, 11, 2),datetime(2015, 11, 2),datetime(2016, 11, 2),datetime(2017, 11, 2),datetime(2018, 11, 2),datetime(2019, 11, 2)]
+        tutorial_count  = [100, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000]
+        plt.plot(year, tutorial_count, color="#6c3376", linewidth=3, marker='o')  
+        plt.xlabel('Year')  
+        plt.ylabel('Number of futurestud.io Tutorials')
+        plt.savefig('media/pdf/line_plot.pdf', dpi=None, facecolor='w', edgecolor='w',orientation='portrait', papertype=None, format=None,transparent=False, bbox_inches=None, pad_inches=0.1,frameon=None, metadata=None)
+        plt.close()
+        '''
+        
         with PdfPages(r'media/pdf/'+str(filename)) as export_pdf:
             
-            '''
-            for i,text in enumerate(hovertext):
-                x = X_Array[i]
-                y = Y_Array[i]
-                plt.plot(x, y, color='green', marker='o')
-                #txtlbl = text + '('+str(y)+')'
-                plt.text(x, y+3, str(y), fontsize=8)
-                #plt.plot(df1['x_axis'], df1['y_axis'], color='green', marker='o')
-            '''    
-
             plt.plot(df1['x_axis'], df1['y_axis'], color='green', marker='o')
             plt.title('Chassis Time Frame History of '+str(token), fontsize=10)
             plt.xlabel(x_axis, fontsize=8)
             plt.ylabel(y_axis, fontsize=8)
+
+            '''
+            bbox_args = dict(boxstyle="round", fc="0.8")
+            arrow_args = dict(arrowstyle = '<-', connectionstyle='arc3,rad=0')
+            
+            for i,text in enumerate(hovertext):
+                x = X_Array[i]
+                y = Y_Array[i]
+                #offsetbox = TextArea(str(), minimumdescent=False)
+                plt.annotate(
+                    text,
+                    xy=(x, y), xytext=(-10, 10),
+                    textcoords='offset points', ha='right', va='bottom',
+                    fontsize=8,
+                    bbox=bbox_args,
+                    arrowprops=arrow_args
+                    )
+            '''
             plt.grid(True)
             export_pdf.savefig()
             plt.close()

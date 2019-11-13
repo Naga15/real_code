@@ -1,6 +1,7 @@
 from django.conf import settings
 import psycopg2
 import pandas as pd
+from dateutil.parser import parse
 from datetime import datetime
 import logging
 db_logger = logging.getLogger('django_auth')
@@ -63,6 +64,35 @@ def chassis_event_information(chassisid,eventid):
       df=cursor.fetchone()
       cursor.close()
       return df
+   except Exception as e:
+      db_logger.exception(e)
+      return []
+
+#chassis claim information
+def chassis_claim_information(chassisid):
+   try:
+      con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+      cursor=con.cursor()
+      cursor.execute("select * from fact_claim where chassisid = '%s'" % (chassisid))
+      df=cursor.fetchall()
+      data = []
+      if df:
+         for record in df:
+            #claimdate   = parse(record[1].strip())
+            #claimdate   = claimdate.strftime("%m/%d/%Y")
+            fact_claim = {'claimdate' : record[1].strip(), 'claimid' : record[2].strip(), 'lastupdated' : record[3].strip()}
+            #get claim parts
+            cursor.execute("select * from fact_claimparts where claimid = '%s'" % (fact_claim['claimid']))
+            parts=cursor.fetchone()
+            if parts:
+               fact_claim['partno']       = parts[1].strip()
+               fact_claim['partdesc']     = parts[2].strip()
+               fact_claim['partamt']      = parts[3].strip()
+               fact_claim['partsource']   = parts[4].strip()
+               fact_claim['partqty']      = parts[5].strip()
+            data.append(fact_claim)
+      cursor.close()
+      return data
    except Exception as e:
       db_logger.exception(e)
       return []

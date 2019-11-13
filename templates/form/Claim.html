@@ -1,57 +1,53 @@
-<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">Claim Data</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="modal-body">
-				<div class="form-group">
-						<label >Chassis ID: {{data.Chassis}}</label>
-				</div>
-				<div class="form-group">
-						<label >ESN : {{data.ESN}}</label>
-				</div>
-				<div class="form-group">
-						<label >Engine Family : {{data.Engine_Family}}</label>
-				</div>
-				<div class="form-group">
-						<label >Model Year : {{data.Model_Year}}</label>
-				</div>
-				<div class="form-group">
-						<label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
-				</div>
-				<div class="form-group">
-						<label >HP Rating : {{data.HP_Rating}}</label>
-				</div>
-
-				<div class="form-group">
-						
-				</div>
-
-				<div class="form-group">
-						<label >Truck Model : {{data.Truck_Model}}</label>
-				</div>
-
-				<div class="form-group">
-						<label >Current Software Level : {{data.Current_Software_Level}}</label>
-				</div>
-				<div class="form-group">
-						<label >Last Software Level : {{data.Last_Software_Level}}</label>
-				</div>
-				<div class="form-group">
-						<label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
-				</div>
-				<div class="form-group">
-						<label >Mileage : {{data.plantdata.Mileage}}</label>
-				</div>
-				<div class="form-group">
-						<label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
-				</div>
-				<div class="form-group">
-						<label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
-				</div>
-		</div>
-	
-	
+<div class="modal-content" style="width:1000px;">
+	<div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">{{title}} Information</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
 	</div>
+	<div class="modal-body">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+						<th rowspan="2">Claim</th>
+						<th rowspan="2">Dealer Story</th>
+						<th colspan="3">Cost</th>
+						<th colspan="3">Part Replaced</th>
+						<th rowspan="2">Part Source</th>
+						<th rowspan="2">Quantity</th>
+						<th rowspan="2">Campaing</th>
+						<th rowspan="2">Bulletin</th>
+				</tr>
+				<tr>
+						<th>Parts</th>
+						<th>Labor</th>
+						<th>Total</th>
+						<th>Part No.</th>
+						<th>Part Desc</th>
+						<th>Part Amount</th>
+				</tr>
+
+			</thead>
+			<tbody>
+				{% if results %}
+					{% for result in results %}
+						<tr>
+							<td>{{result.claimid}}</td>	
+							<td>-</td>
+							<td>-</td>
+							<td>-</td>
+							<td>-</td>
+							<td>{{result.partno}}</td>
+							<td>{{result.partdesc}}</td>
+							<td>{{result.partamt}}</td>
+							<td>{{result.partsource}}</td>
+							<td>{{result.partqty}}</td>
+							<td>-</td>
+							<td>-</td>
+						</tr>
+					{% endfor %}
+				{% endif %}	
+			</tbody>
+		</table>
+	</div>
+</div>
