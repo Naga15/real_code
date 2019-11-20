@@ -19,7 +19,7 @@ from plotly.offline import plot
 import plotly.graph_objs as go
 import pandas as pd
 from datetime import datetime
-import json
+import simplejson as json
 import csv
 
 import uuid 
@@ -104,8 +104,8 @@ def dashboard(request):
                 FT_Array    = []
                 hovertext   = []
                 for record in results:
-                    p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
-                    timedate = parse(p['timedate'])
+                    p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+                    timedate = p['timedate']
                     I_Array.append(str(p['eventid']))
                     if filter_x_axis == 'Week':
                         timedate = timedate.strftime("%w %b %Y")
@@ -154,7 +154,7 @@ def service(request,chassisid, eventid):
     #chassis event information
     result = chassis_event_information(chassisid,eventid)
     if result:
-        eventname   = str(result[1].strip())
+        eventname   = str(result[1])
         if(eventname == 'Engine Build'):
             formname = 'form/Case.html'
         elif(eventname == 'Chassis Build'):
@@ -189,8 +189,8 @@ def export_to_csv(request,token,x_axis,y_axis):
         Y_Array     = []
         hovertext   = []
         for record in results:
-            p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
-            timedate = parse(p['timedate'])
+            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+            timedate = p['timedate']
             #filter by X Axis
             if x_axis == 'Week':
                 timedate = timedate.strftime("%w %b %Y")
@@ -234,8 +234,8 @@ def export_to_pdf(request,token,x_axis,y_axis):
         Y_Array     = []
         hovertext   = []
         for record in results:
-            p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
-            timedate = parse(p['timedate'])
+            p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+            timedate = p['timedate']
             #filter by X Axis
             if x_axis == 'Week':
                 timedate = timedate.strftime("%w %b %Y")
@@ -306,8 +306,8 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
             Y_Array     = []
             hovertext   = []
             for record in results:
-                p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4].strip(), 'timecalendarweek' : record[5].strip(), 'mileage' : record[6].strip(), 'mileagekm' : record[7].strip(), 'enginehours' : record[8].strip(), 'engineonly' : record[9].strip(), 'eventid' : record[10].strip()}
-                timedate = parse(p['timedate'])
+                p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+                timedate = p['timedate']
                 testdate = p['timedate'].split(" ")
                 timedate = datetime.strptime(testdate[0], '%d/%m/%y')
                 #filter by X Axis
@@ -323,21 +323,21 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
                     X_Array.append(timedate)
                 
                 if y_axis == 'Hours':
-                    mileage = p['enginehours'].strip()
+                    mileage = p['enginehours']
                     if float(mileage).is_integer():
                         mileage = int(mileage)
                     else:
                         mileage = float(mileage)
                     Y_Array.append(mileage)
                 elif y_axis == 'Km':
-                    mileage = p['mileagekm'].strip()
+                    mileage = p['mileagekm']
                     if float(mileage).is_integer():
                         mileage = int(mileage)
                     else:
                         mileage = float(mileage)
                     Y_Array.append(mileage)
                 else:
-                    mileage = p['mileage'].strip()
+                    mileage = p['mileage']
                     if float(mileage).is_integer():
                         mileage = int(mileage)
                     else:
@@ -345,7 +345,7 @@ def export_to_pdf_new(request,token,x_axis,y_axis):
                     Y_Array.append(mileage)
 
                 text = str(p['eventdesc'])+' <br/> Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours'])
-                hovertext.append(text.strip())
+                hovertext.append(text)
 
         Data1 = {'x_axis': X_Array,'y_axis': Y_Array,'text': hovertext}
         df1 = DataFrame(Data1,columns=['x_axis','y_axis','text'])
