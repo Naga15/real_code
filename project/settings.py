@@ -143,7 +143,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #Authentication Information
 
 AUTHENTICATION_DATABASE_NAME    = 'chassis'
-AUTHENTICATION_HOST             = 'chassis-cluster.cmizplejoroy.us-east-1.redshift.amazonaws.com'
+AUTHENTICATION_HOST             = 'chassis-cluster1.cmizplejoroy.us-east-1.redshift.amazonaws.com'
 AUTHENTICATION_USERNAME         = 'reimann'
 AUTHENTICATION_PASSWORD         = 'Manthan01'
 AUTHENTICATION_PORT             = '5439'
