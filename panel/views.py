@@ -156,23 +156,29 @@ def service(request,chassisid, eventid):
     if result:
         eventname   = str(result[1])
         if(eventname == 'Engine Build'):
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         elif(eventname == 'Chassis Build'):
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
             context['results']  = chassis_claim_information(chassisid)
-            formname = 'form/Claim.html'
+            template = 'form/Claim.html'
         elif(eventname == 'service'):
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         elif(eventname == 'basic W'):
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         elif(eventname == 'basicE'):
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         else:
-            formname = 'form/Case.html'
+            context['data'] = chassis_information(chassisid)
+            template = 'form/Case.html'
         context['service']  = result
         context['title']    = result[1]
-        html_body = render_to_string(formname, context)
+        html_body = render_to_string(template, context)
         return HttpResponse(html_body)
     else:
         return HttpResponse('Invalid Request')
