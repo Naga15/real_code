@@ -18,7 +18,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
-
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <style>
 
@@ -101,7 +101,7 @@
                   <h5 class="card-header">
                    <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="sidebarToggle" class="d-block">
                     <img src="{% static 'img/front-truck.png' %}" style="height: 20px">
-                      Vehicle Information&nbsp;<i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
+                      <span id="text-vehc">Vehicle Information</span>&nbsp;<i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
                    </a>
                   </h5>
                   <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
@@ -191,7 +191,7 @@
 <style type="text/css">
 .sidebar.toggled {
     overflow: visible;
-    width: 175px !important;
+    width: 100px !important;
 }
 .sidebar {
     overflow: visible;
@@ -221,13 +221,15 @@ body.sidebar-toggled footer.sticky-footer {
   <script src="{% static 'js/common.js' %}"></script>
 
   <script>
+    $('#sidebarToggle').click(function(){
+      $('#text-vehc').hide();
+    });
       $('#vinfo').on('hidden.bs.collapse', function () {
         // do something…
-        console.log('call');
       })
       $('#vinfo').on('shown.bs.collapse', function () {
+        $('#text-vehc').show();
         // do something…
-        console.log('call2');
       })
       
       function downloadPDF() 

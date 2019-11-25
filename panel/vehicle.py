@@ -116,7 +116,7 @@ def chassis_claim_information(chassisid):
             #claimdate   = claimdate.strftime("%m/%d/%Y")
             fact_claim = {'claimdate' : record[1].strip(), 'claimid' : record[2].strip(), 'lastupdated' : record[3].strip()}
             #get claim parts
-            cursor.execute("select * from fact_claimparts where claimid = '%s'" % (fact_claim['claimid']))
+            cursor.execute('''select * from "fact_claimparts" where claimid= '%s' ''' % (fact_claim['claimid']))
             parts=cursor.fetchone()
             if parts:
                fact_claim['partno']       = parts[1].strip()
