@@ -157,9 +157,9 @@ def service(request,chassisid, eventid):
         eventname   = str(result[1])
         if(eventname == 'Engine Build'):
             context['data'] = chassis_information(chassisid)
-            template = 'form/Case.html'
+            template = 'form/CEP.html'
         elif(eventname == 'Chassis Build'):
-            context['data'] = chassis_information(chassisid)
+            context['data'] = plant_timeline(chassisid)
             template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
             context['results']  = chassis_claim_information(chassisid)

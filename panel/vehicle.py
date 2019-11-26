@@ -130,3 +130,15 @@ def chassis_claim_information(chassisid):
    except Exception as e:
       db_logger.exception(e)
       return []
+
+# def plant_timeline(chassisid):
+#    try:
+#       con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+#       cursor=con.cursor()
+#       cursor.execute("select * from fact_timeline where chassisid = '%s'" % (chassisid))
+#       df=cursor.fetchone()
+#       cursor.close()
+#       return df
+#    except Exception as e:
+#       db_logger.exception(e)
+#       return []
