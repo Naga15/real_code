@@ -231,7 +231,7 @@ def export_to_csv(request,token,x_axis,y_axis):
 
 #data export to pdf
 @login_required(login_url="/login")  # - if not logged in redirect to /
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_pdf(request,token,x_axis,y_axis):
     #search chassis
     results = search_chassis_timeline(token)
