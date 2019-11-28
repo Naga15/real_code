@@ -162,8 +162,8 @@ def service(request,chassisid, eventid):
             context['data'] = plant_timeline(chassisid)
             template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
-            context['results']  = chassis_claim_information(chassisid)
-            template = 'form/Claim.html'
+            context['results']  = fact_case_information('KJ222666')
+            template = 'form/Case.html'
         elif(eventname == 'service'):
             context['data'] = chassis_information(chassisid)
             template = 'form/Case.html'

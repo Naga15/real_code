@@ -142,3 +142,26 @@ def plant_timeline(chassisid):
    except Exception as e:
       db_logger.exception(e)
       return []
+
+def fact_case_information(chassisid):
+   try:
+      con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+      cursor=con.cursor()
+      cursor.execute("select * from fact_case where chassisid = '%s'" % (chassisid))
+      df=cursor.fetchall()
+      data = []
+      if df:
+         for record in df:
+            fact_case = {'caseid' : record['caseid'].strip(),'casedate':record['casedate'].strip(),'claimid':record['claimid'].strip(),'attachid':record['attachmentid'].strip(),'lastupdated':record['lastupdated'].strip()}
+            cursor.execute('''select * from "dim_case" where caseid = '%s'"''' % (fact_case['caseid']))
+            case = cursor.fetchone()
+            if case:
+               fact_case['disposition'] = case['disposition'].strip()
+               fact_case['lastupdated'] = case['lastupdated'].strip()
+               fact_case['messages'] = case['messages'].strip()
+            data.append(fact_case)
+      cursor.close()
+      return data
+   except Exception as e:
+      db_logger.exception(e)
+      return []
