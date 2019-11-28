@@ -12,14 +12,10 @@ def chassis_information(chassisid):
       con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
       cursor=con.cursor()
       # cursor.execute("select * from dim_chassis where chassisid = '%s'" % (chassisid))
-      cursor.execute("""select distinct public.dim_engine.chassisid,public.dim_engine.enginefamilyname,
-public.dim_engine.engineserialno,eniginemodelyear,dim_engine.breakdownengineconfiguration,
-hprating,truckmodel,currentsoftwarelevel,lastsoftwarelevel,
-transmissionconfiguration,currentmileage,aftertreatmentsoftwarelevel,rearaxleratio
-from public.dim_chassis
-join  public.dim_engine on public.dim_chassis.chassisid = public.dim_engine.chassisid
-where dim_chassis.chassisid = '%s'
-order by public.dim_chassis.chassisid                     """ % (chassisid))
+      cursor.execute("""select distinct chassisid, public.fact_timeline.eventid, eventdesc, timedate, timeday,timeweek, enginehours,engineonly from public.fact_timeline
+join public.dim_event on public.fact_timeline.eventid = public.dim_event.eventid
+where chassisid = '%s'
+order by public.fact_timeline.eventid""" % (chassisid))
 
 
 
@@ -29,18 +25,18 @@ order by public.dim_chassis.chassisid                     """ % (chassisid))
       record = {}
       if(df):
          record['chassisid']                    = df[0] if df[0] else ''
-         record['enginefamilyname']      = df[1] if df[1] else ''
-         record['engineserialno']    = df[2] if df[2] else ''
-         record['eniginemodelyear']                  = df[3] if df[3] else ''
-         record['breakdownengineconfiguration']  = df[4] if df[4] else ''
-         record['hprating']  = df[5] if df[5] else ''
-         record['truckmodel']                = df[6] if df[6] else ''
-         record['currentsoftwarelevel']                = df[7] if df[7] else ''
-         record['lastsoftwarelevel']                 = df[8] if df[8] else ''
-         record['transmissionconfiguration']               = df[9] if df[9] else ''
-         record['currentmileage']            = df[10] if df[10] else ''
-         record['aftertreatmentsoftwarelevel']                  = df[11] if df[11] else ''
-         record['rearaxleratio']                  = df[12] if df[12] else ''
+         record['eventid']      = df[1] if df[1] else ''
+         record['eventdesc']    = df[2] if df[2] else ''
+         record['timedate']                  = df[3] if df[3] else ''
+         record['timeday']  = df[4] if df[4] else ''
+         record['timeweek']  = df[5] if df[5] else ''
+         record['enginehours']                = df[6] if df[6] else ''
+         record['engineonly']                = df[7] if df[7] else ''
+         # record['lastsoftwarelevel']                 = df[8] if df[8] else ''
+         # record['transmissionconfiguration']               = df[9] if df[9] else ''
+         # record['currentmileage']            = df[10] if df[10] else ''
+         # record['aftertreatmentsoftwarelevel']                  = df[11] if df[11] else ''
+         # record['rearaxleratio']                  = df[12] if df[12] else ''
 
          # record['chassisid']                    = df[0] if df[0] else ''
          # record['engineserialno']      = df[1] if df[1] else ''
@@ -54,7 +50,6 @@ order by public.dim_chassis.chassisid                     """ % (chassisid))
          # record['currentmileage']               = df[9] if df[9] else ''
          # record['chassisbuildmonth']            = df[10] if df[10] else ''
          # record['lastupdated']                  = df[11] if df[11] else ''
-
       return record
    except Exception as e:
       db_logger.exception(e)
