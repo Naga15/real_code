@@ -257,10 +257,12 @@ function openFormPopup(eventid)
 {
 	$.ajax({
 		type: 'GET',
-		url: "/service/"+chassisid+"/"+eventid,
+		url: "/service/"+chassisid+"/"+eventid+"/"+chassisid,
 		success:
 		function(data)
 		{
+			console.log('{{enginenum}}');
+			
 			$('#form-data').html('')
 			$('#form-data').html(data)
 			$("#myModal").modal();

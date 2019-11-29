@@ -96,6 +96,10 @@ def dashboard(request):
         filter_y_axis = request.POST.get('y-axis')
         if filter_search != '':
             #search chassis
+            if 'Engine_Only' in request.POST:
+                enginenum = filter_search
+            else:
+                enginenum = ''
             results = search_chassis_timeline(filter_search)
             if results:
                 I_Array     = []
@@ -129,7 +133,7 @@ def dashboard(request):
                     hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(p['enginehours'])+'<br>')
                     FT_Array.append(p['eventdesc'])
 
-                context['data']         = chassis_information(filter_search)
+                context['data']         = chassis_information(chassisid=filter_search,enginenum=enginenum if True else '')
                 context['X_Array']      = json.dumps(X_Array)
                 context['Y_Array']      = json.dumps(Y_Array)
                 context['I_Array']      = json.dumps(I_Array)
@@ -149,20 +153,20 @@ def dashboard(request):
 #get_chart
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def service(request,chassisid, eventid):
+def service(request,chassisid, eventid, enginenum):
     context = {}
     #chassis event information
     result = chassis_event_information(chassisid,eventid)
     if result:
         eventname   = str(result[1])
         if(eventname == 'Engine Build'):
-            context['data'] = chassis_information(chassisid)
+            context['data'] = chassis_information(chassisid,enginenum=enginenum if True else '')
             template = 'form/CEP.html'
         elif(eventname == 'Chassis Build'):
             context['data'] = plant_timeline(chassisid)
             template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
-            context['results']  = fact_case_information('KJ222666')
+            context['results']  = fact_case_information(chassisid)
             template = 'form/Case.html'
         elif(eventname == 'service'):
             context['data'] = chassis_information(chassisid)

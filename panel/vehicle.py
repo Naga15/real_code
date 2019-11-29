@@ -7,15 +7,12 @@ import logging
 db_logger = logging.getLogger('django_auth')
 
 #chassis information
-def chassis_information(chassisid):
+def chassis_information(chassisid,enginenum):
    try:
       con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
       cursor=con.cursor()
       # cursor.execute("select * from dim_chassis where chassisid = '%s'" % (chassisid))
-      cursor.execute("""select distinct chassisid, public.fact_timeline.eventid, eventdesc, timedate, timeday,timeweek, enginehours,engineonly from public.fact_timeline
-join public.dim_event on public.fact_timeline.eventid = public.dim_event.eventid
-where chassisid = '%s'
-order by public.fact_timeline.eventid""" % (chassisid))
+      cursor.execute("""select distinct dim_engine.chassisid,currentmileage, transmissionconfiguration, application,aftertreatmentsoftwarelevel,rearaxleration from dim_chassis on dim_chassis.chassisid=dim_engine.chassisid where dim_chassis.chassisid = '%s' or dim_engine.engineserialno = '%s' order by dim_chassis.chassisid""" % (chassisid,enginenum))
 
 
 
