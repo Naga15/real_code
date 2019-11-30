@@ -170,9 +170,9 @@ def service(request,chassisid, eventdata, engineonly):
         if(eventname == 'Engine Build'):
             context['data'] = cep_data_information(chassisid,chassis_info['engineserialno'])
             template = 'form/CEP.html'
-        elif(eventname == 'Chassis Build'):
-            context['data'] = plant_timeline(chassisid)
-            template = 'form/Case.html'
+        # elif(eventname == 'Chassis Build'):
+        #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
+        #     template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
             context['results']  = claim_information(chassisid,chassis_info['engineserialno'],eventdate)
             template = 'form/Case.html'
