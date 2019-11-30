@@ -34,7 +34,7 @@
 										<button style="font-size: 14px;" type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
 									</div>
 										<div class="custom-control custom-checkbox col-xs-5" style="margin-top: 2rem;margin-left: 2rem;">
-											<input style="font-size: 14px;" type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only">
+											<input style="font-size: 14px;" type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only" {% if filter_Engine_Only %} checked {% endif %}>
 											<label style="font-size: 14px;" class="custom-control-label" for="defaultUnchecked">Engine Only</label>
 										    </div>									
 										</div>
@@ -161,12 +161,13 @@
 	 
 {% if isData == 'Yes'%}	  
 <script>
-var chassisid = '{{filter_search}}'
-var annotations = []
-var X_Array = JSON.parse('{{X_Array|safe}}')
-var Y_Array = JSON.parse('{{Y_Array|safe}}')
-var TEXTS 	= JSON.parse('{{hovertext|safe}}')
-var DID 		= JSON.parse('{{I_Array|safe}}')
+var chassisid 					= '{{filter_search}}'
+var filter_Engine_Only 	= '{{filter_Engine_Only}}'
+var annotations 				= []
+var X_Array 						= JSON.parse('{{X_Array|safe}}')
+var Y_Array 						= JSON.parse('{{Y_Array|safe}}')
+var TEXTS 							= JSON.parse('{{hovertext|safe}}')
+var DID 								= JSON.parse('{{I_Array|safe}}')
 var i;
 for (i = 0; i < X_Array.length; i++) 
 { 
@@ -200,8 +201,8 @@ var myPlot = document.getElementById('chart-section'),
 				y:JSON.parse('{{Y_Array|safe}}'),
 				DID : JSON.parse('{{I_Array|safe}}'),
 				type:'scatter',
-        mode:'lines+markers',
-				name: 'Lines, Markers and Text', 
+        mode:'markers',
+				/*name: 'Lines, Markers and Text', */
 				text: JSON.parse('{{hovertext|safe}}'),
 				marker:{size:16} 
 				} 
@@ -209,7 +210,7 @@ var myPlot = document.getElementById('chart-section'),
     layout = {
 		
 			showlegend: false,
-			annotations: annotations,
+			/*annotations: annotations,*/
 			
 
 		hovermode:'closest',
@@ -257,12 +258,10 @@ function openFormPopup(eventid)
 {
 	$.ajax({
 		type: 'GET',
-		url: "/service/"+chassisid+"/"+eventid+"/"+chassisid,
+		url: "/service/"+chassisid+"/"+eventid+"/"+filter_Engine_Only,
 		success:
 		function(data)
 		{
-			console.log('{{enginenum}}');
-			
 			$('#form-data').html('')
 			$('#form-data').html(data)
 			$("#myModal").modal();
@@ -296,7 +295,7 @@ function ExportCSV()
 	var filter_search = '{{filter_search}}';
 	var filter_x_axis = '{{filter_x_axis}}';
 	var filter_y_axis = '{{filter_y_axis}}';
-	window.location = 'export-to-csv/'+filter_search+'/'+filter_x_axis+'/'+filter_y_axis;
+	window.location = 'export-to-csv/'+filter_search+'/'+filter_x_axis+'/'+filter_y_axis+"/"+filter_Engine_Only;
 }
 </script>
 {% endif  %}
