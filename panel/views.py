@@ -109,9 +109,11 @@ def dashboard(request):
                 FT_Array    = []
                 hovertext   = []
                 Color_Array = []
+                Recors_data = []
                 for record in results:
                     p = {'chassisid' : record[0], 'eventdesc' : record[1].strip(), 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
-                    timedate = p['timedate']
+                    timedate    = p['timedate']
+                    old_formate = timedate      
                     #I_Array.append(str(p['eventid']))
                     I_Array.append(str(p['eventid'])+'--'+str(timedate))
 
@@ -134,20 +136,19 @@ def dashboard(request):
                     else:
                         Y_Array.append(p['mileage'])
 
-
                     #color code
                     if(str(p['eventdesc']) == 'Engine Build'):
-                        Color_Array.append('#3380FF')
+                        Color_Array.append('#007bff')
                     elif(str(p['eventdesc']) == 'Chassis Build'):
-                        Color_Array.append('#FFAC33')
+                        Color_Array.append('#ffc107')
                     elif(str(p['eventdesc']) == 'Warranty Claim'):
-                        Color_Array.append('#00FF00')
+                        Color_Array.append('#28a745')
                     elif(str(p['eventdesc']) == 'Fault code'):
-                        Color_Array.append('#FF33FF')
+                        Color_Array.append('#dc3545')
                     else:
-                        Color_Array.append('#33FFFC')
+                        Color_Array.append('#17a2b8')
 
-
+                    Recors_data.append({'id' : str(p['eventid'])+'--'+str(old_formate), 'eventdesc' : str(p['eventdesc']), 'timedate' : timedate, 'timeweek' : p['timeweek'], 'timecalendarweek' : p['timecalendarweek'], 'enginehours' : p['enginehours'],'eventid' : p['eventid']})
                     hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(p['enginehours'])+'<br>')
                     FT_Array.append(p['eventdesc'])
 
@@ -158,6 +159,7 @@ def dashboard(request):
                 context['hovertext']    = json.dumps(hovertext)
                 context['FT_Array']     = json.dumps(FT_Array)
                 context['Color_Array']  = json.dumps(Color_Array)
+                context['Recors_data']  = Recors_data
                 isData = 'Yes'
             else:
                 DefaultMessage = 'Vehicle Information not found, Please try with other Chassis ID / ESN.'
@@ -186,21 +188,9 @@ def service(request,chassisid, eventdata, engineonly):
         if(eventname == 'Engine Build'):
             context['data'] = cep_data_information(chassisid,chassis_info['engineserialno'])
             template = 'form/CEP.html'
-<<<<<<< HEAD
-<<<<<<< HEAD
         elif(eventname == 'Chassis Build'):
             context['data'] = plant_data_information(chassisid,chassis_info['engineserialno'])
             template = 'form/Plant.html'
-=======
-        # elif(eventname == 'Chassis Build'):
-        #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
-        #     template = 'form/Case.html'
->>>>>>> 374d829709a88776594d80b388214a079dd9d0c5
-=======
-        # elif(eventname == 'Chassis Build'):
-        #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
-        #     template = 'form/Case.html'
->>>>>>> 374d829709a88776594d80b388214a079dd9d0c5
         elif(eventname == 'Warranty Claim'):
             context['results']  = claim_information(chassisid,chassis_info['engineserialno'],eventdate)
             template = 'form/Claim.html'
@@ -271,7 +261,6 @@ def export_to_csv(request,token,x_axis,y_axis,engineonly):
 
 #data export to pdf
 @login_required(login_url="/login")  # - if not logged in redirect to /
-
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def export_to_pdf(request,token,x_axis,y_axis,engineonly):
     #search chassis
