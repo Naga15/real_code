@@ -108,48 +108,45 @@
                   </h5>
                   <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
                       <div class="card-body">
-                      <div class="form-group">
-                          <label >Chassis ID: {{data.chassisid}}</label>
+                              <div class="form-group">
+                          <label >Chassis ID: {{data.Chassis}}</label>
                       </div>
                       <div class="form-group">
-                        <label >Engine Serial No: {{data.engineserialno}}</label>
-                    </div>
-                      <div class="form-group">
-                          <label >Order Processing Division :  {{data.orderprocessingdivision}}</label>
+                          <label >ESN : {{data.ESN}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Transmission Configuration :  {{data.transmissionconfiguration}} </label>
+                          <label >Engine Family : {{data.Engine_Family}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Application :  {{data.application}}</label>
+                          <label >Model Year : {{data.Model_Year}}</label>
                       </div>
                       <div class="form-group">
-                          <label >After Treatment Software Level :  {{data.aftertreatmentsoftwarelevel}}</label>
+                          <label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Vehicle ID Number :  {{data.vehicleidentificationnumber}}</label>
+                          <label >HP Rating : {{data.HP_Rating}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Rear Axle Ratio :  {{data.rearaxleratio}}</label>
+                          <label >Truck Model : {{data.Truck_Model}}</label>
                       </div>
-          
+
                       <div class="form-group">
-                          <label >In Service Date :  {{data.inservicedate}}</label>
-                      </div>
-                      <div class="form-group">
-                          <label >Delivery Date :  {{data.deliverydate}}</label>
+                          <label >Current Software Level : {{data.Current_Software_Level}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Current Mileage: {{data.currentmileage}}</label>
+                          <label >Last Software Level : {{data.Last_Software_Level}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Chassis Build Month : {{data.chassisbuildmonth}}</label>
+                          <label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Last Updated : {{data.lastupdated}}</label>
+                          <label >Mileage : {{data.plantdata.Mileage}}</label>
                       </div>
                       <div class="form-group">
-                          <label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
+                          <label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
                       </div>
                     </div>
                   </div>
