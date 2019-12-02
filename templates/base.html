@@ -18,7 +18,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
-
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <style>
 
@@ -104,6 +104,7 @@
                     <p id="sideBarText" style="margin-right: 5px;">Vehicle Information</p>
                     <i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
                    </div>
+
                    </a>
                   </h5>
                   <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
@@ -112,38 +113,41 @@
                           <label >Chassis ID: {{data.chassisid}}</label>
                       </div>
                       <div class="form-group">
-                          <label >ESN :  {{data.engineserialno}}</label>
+                        <label >Engine Serial No: {{data.engineserialno}}</label>
+                    </div>
+                      <div class="form-group">
+                          <label >Order Processing Division :  {{data.orderprocessingdivision}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Engine Family :  {{data.enginefamilyname}} </label>
+                          <label >Transmission Configuration :  {{data.transmissionconfiguration}} </label>
                       </div>
                       <div class="form-group">
-                          <label >Model Year :  {{data.eniginemodelyear}}</label>
+                          <label >Application :  {{data.application}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Breakdown of Engine Configuration :  {{data.breakdownengineconfiguration}}</label>
+                          <label >After Treatment Software Level :  {{data.aftertreatmentsoftwarelevel}}</label>
                       </div>
                       <div class="form-group">
-                          <label >HP Rating :  {{data.hprating}}</label>
+                          <label >Vehicle ID Number :  {{data.vehicleidentificationnumber}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Truck Model :  {{data.truckmodel}}</label>
+                          <label >Rear Axle Ratio :  {{data.rearaxleratio}}</label>
                       </div>
           
                       <div class="form-group">
-                          <label >Current Software Level :  {{data.currentsoftwarelevel}}</label>
+                          <label >In Service Date :  {{data.inservicedate}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Last Software Level :  {{data.lastsoftwarelevel}}</label>
+                          <label >Delivery Date :  {{data.deliverydate}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Transmission  Configuration: {{data.transmissionconfiguration}}</label>
+                          <label >Current Mileage: {{data.currentmileage}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Mileage : {{data.currentmileage}}</label>
+                          <label >Chassis Build Month : {{data.chassisbuildmonth}}</label>
                       </div>
                       <div class="form-group">
-                          <label >After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
+                          <label >Last Updated : {{data.lastupdated}}</label>
                       </div>
                       <div class="form-group">
                           <label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
@@ -168,8 +172,6 @@
 
 	  
 	</div>
-      <!-- /.container-fluid -->
-
       <!-- Sticky Footer -->
       <footer class="sticky-footer" style="border-top: solid 1px orange;color: gray;">
         <div style="margin-top:2%;">
@@ -193,14 +195,14 @@
 <style type="text/css">
 .sidebar.toggled {
     overflow: visible;
-    width: 175px !important;
+    width: 100px !important;
 }
 .sidebar {
     overflow: visible;
     width: 285px !important;
 }
 footer.sticky-footer {
-    width: calc(100% - 285px);
+    width: calc(100% - 235px);
 }
 body.sidebar-toggled footer.sticky-footer {
     width: calc(100% - 175px);
@@ -223,13 +225,15 @@ body.sidebar-toggled footer.sticky-footer {
   <script src="{% static 'js/common.js' %}"></script>
 
   <script>
+    $('#sidebarToggle').click(function(){
+      $('#text-vehc').hide();
+    });
       $('#vinfo').on('hidden.bs.collapse', function () {
         // do something…
-        console.log('call');
       })
       $('#vinfo').on('shown.bs.collapse', function () {
+        $('#text-vehc').show();
         // do something…
-        console.log('call2');
       })
       
       function downloadPDF() 

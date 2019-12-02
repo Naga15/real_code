@@ -85,18 +85,23 @@ def logout_view(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
     context = {}
-    filter_search = ''
-    filter_x_axis = 'Day'
-    filter_y_axis = 'Miles'
-    isData = 'No'
+    filter_search       = ''
+    filter_x_axis       = 'Day'
+    filter_y_axis       = 'Miles'
+    isData              = 'No'
+    filter_Engine_Only  = 0
+
     DefaultMessage = 'Please search vehicle information using Chassis ID / ESN'
     if request.method == "POST":
-        filter_search = request.POST.get('search')
-        filter_x_axis = request.POST.get('x-axis')
-        filter_y_axis = request.POST.get('y-axis')
+        filter_search       = request.POST.get('search')
+        filter_x_axis       = request.POST.get('x-axis')
+        filter_y_axis       = request.POST.get('y-axis')
         if filter_search != '':
             #search chassis
-            results = search_chassis_timeline(filter_search)
+            if 'Engine_Only' in request.POST:
+                filter_Engine_Only = 1
+            
+            results = search_chassis_timeline(filter_search,filter_Engine_Only)
             if results:
                 I_Array     = []
                 X_Array     = []
@@ -106,7 +111,9 @@ def dashboard(request):
                 for record in results:
                     p = {'chassisid' : record[0], 'eventdesc' : record[1], 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
                     timedate = p['timedate']
-                    I_Array.append(str(p['eventid']))
+                    #I_Array.append(str(p['eventid']))
+                    I_Array.append(str(p['eventid'])+'--'+str(timedate))
+
                     if filter_x_axis == 'Week':
                         timedate = timedate.strftime("%w %b %Y")
                         X_Array.append('Week '+str(timedate))
@@ -144,26 +151,31 @@ def dashboard(request):
     context['filter_y_axis'] = filter_y_axis
     context['isData'] = isData
     context['DefaultMessage'] = DefaultMessage
+    context['filter_Engine_Only'] = filter_Engine_Only
     return render(request, 'dashboard.html', context)
 
 #get_chart
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def service(request,chassisid, eventid):
+def service(request,chassisid, eventdata, engineonly):
     context = {}
     #chassis event information
+    eventdata   = eventdata.split('--')
+    eventid     = eventdata[0]
+    eventdate   = eventdata[1]
     result = chassis_event_information(chassisid,eventid)
     if result:
-        eventname   = str(result[1])
+        eventname       = str(result[1])
+        chassis_info    = chassis_information(chassisid)
         if(eventname == 'Engine Build'):
-            context['data'] = chassis_information(chassisid)
-            template = 'form/Case.html'
-        elif(eventname == 'Chassis Build'):
-            context['data'] = chassis_information(chassisid)
-            template = 'form/Case.html'
+            context['data'] = cep_data_information(chassisid,chassis_info['engineserialno'])
+            template = 'form/CEP.html'
+        # elif(eventname == 'Chassis Build'):
+        #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
+        #     template = 'form/Case.html'
         elif(eventname == 'Warranty Claim'):
-            context['results']  = chassis_claim_information(chassisid)
-            template = 'form/Claim.html'
+            context['results']  = claim_information(chassisid,chassis_info['engineserialno'],eventdate)
+            template = 'form/Case.html'
         elif(eventname == 'service'):
             context['data'] = chassis_information(chassisid)
             template = 'form/Case.html'
@@ -187,9 +199,9 @@ def service(request,chassisid, eventid):
 #Data export to csv
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def export_to_csv(request,token,x_axis,y_axis):
+def export_to_csv(request,token,x_axis,y_axis,engineonly):
     #search chassis
-    results = search_chassis_timeline(token)
+    results = search_chassis_timeline(token,engineonly)
     if results:
         X_Array     = []
         Y_Array     = []
@@ -231,10 +243,11 @@ def export_to_csv(request,token,x_axis,y_axis):
 
 #data export to pdf
 @login_required(login_url="/login")  # - if not logged in redirect to /
-# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def export_to_pdf(request,token,x_axis,y_axis):
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def export_to_pdf(request,token,x_axis,y_axis,engineonly):
     #search chassis
-    results = search_chassis_timeline(token)
+    results = search_chassis_timeline(token,engineonly)
     if results:
         X_Array     = []
         Y_Array     = []
@@ -302,11 +315,11 @@ def export_to_pdf(request,token,x_axis,y_axis):
 #data export to pdf
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def export_to_pdf_new(request,token,x_axis,y_axis):
+def export_to_pdf_new(request,token,x_axis,y_axis,engineonly):
     try:
         
         #search chassis
-        results = search_chassis_timeline(token)
+        results = search_chassis_timeline(token,engineonly)
         if results:
             X_Array     = []
             Y_Array     = []
