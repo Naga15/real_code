@@ -63,18 +63,31 @@ def search_chassis_timeline(search,engineonly):
    try:
       con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
       cursor=con.cursor()
-      cursor.execute(""" select 
+      if engineonly == 1:
+         cursor.execute(""" select 
+                                    distinct   chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
+                              from 
+                                       fact_timeline
+                                       join dim_event on fact_timeline.eventid = dim_event.eventid
+                              where
+                                       chassisid = '%s'
+                                       and
+                                       engineonly = 1
+                              order by
+                                       timedate ASC
+                           """% (search))
+      else:
+         cursor.execute(""" select 
                                  distinct   chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
                            from 
                                     fact_timeline
                                     join dim_event on fact_timeline.eventid = dim_event.eventid
                            where
                                     chassisid = '%s'
-                                    and
-                                    engineonly = '%s'
                            order by
                                     timedate ASC
-                        """% (search,engineonly))
+                        """% (search))
+
       # cursor.execute(""" select 
       #                 distinct   chassisid,eventdesc,timedate,timeday,timeweek,timecalendarweek,mileage,mileagekm,enginehours,engineonly,fact_timeline.eventid as eventid
       #                      from public.fact_timeline

@@ -5,7 +5,7 @@ th{
 </style>
 <div class="modal-content" style="width:1000px;">
 	<div class="modal-header">
-		<h5 class="modal-title" id="exampleModalLabel">{{title}} Information</h5>
+		<h5 class="modal-title" id="exampleModalLabel">Claim Information</h5>
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
@@ -38,17 +38,17 @@ th{
 					{% for result in results %}
 						<tr>
 							<td>{{result.claimid}}</td>	
-							<td>-</td>
-							<td>-</td>
-							<td>-</td>
+							<td>{{result.dealerstory}}</td>	
+							<td>{{result.proamount}}</td>
+							<td>{{result.propart}}</td>
 							<td>-</td>
 							<td>{{result.partno}}</td>
 							<td>{{result.partdesc}}</td>
 							<td>{{result.partamt}}</td>
 							<td>{{result.partsource}}</td>
 							<td>{{result.partqty}}</td>
-							<td>-</td>
-							<td>-</td>
+							<td>{{result.compaignid}}</td>
+							<td>{{result.bulletlink}}</td>
 						</tr>
 					{% endfor %}
 				{% endif %}	

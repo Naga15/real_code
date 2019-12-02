@@ -1,0 +1,33 @@
+<style>
+th{
+	font-weight: normal !important;
+}
+</style>
+<div class="modal-content" style="width:1000px;">
+	<div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">Fault Code</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Fault Code</th>
+					<th>Fault Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% if results %}
+					{% for result in results %}
+						<tr>
+							<td>{{result.faultcode}}</td>	
+							<td>{{result.faultdesc}}</td>
+						</tr>
+					{% endfor %}
+				{% endif %}	
+			</tbody>
+		</table>
+	</div>
+</div>

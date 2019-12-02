@@ -42,21 +42,20 @@
 </head>
 
 <body id="page-top">
-
   <nav class="navbar navbar-expand navbar-dark bg-blue static-top">
 
     <a class="navbar-brand mr-1" href="/dashboard"> 
       <!--<img src="{% static 'img/logo1.png' %}"></div>-->
       
         <div class="text-center">
-          <h2 style="font-style: italic;color: white;text-shadow: 2px 2px 4px darkblue;font-size: 18px;">
+          <h2 style="font-style: italic;color: white;font-variant: slashed-zero;text-shadow: 10px 10px 10px #212529;font-size: 18px;">
             Paccar Technical Center
           </h2>
           
         </div>
     </a>
-    <div class="d-inline text-center" style="margin-left:30%">
-        <small style="font-style: italic;color: white;text-shadow: 2px 2px 4px darkblue;font-size: 24px;">
+    <div class="d-inline text-left" style="margin-left: 30%;" >
+        <small style="/* font-style: italic; */color: orange;text-shadow: 2px 2px 4px #007bff;font-size: 18px;font-variant: petite-caps;">
             Chassis History
         </small>
         
@@ -78,7 +77,6 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <!--<a class="dropdown-item" href="/dashboard">Settings</a>-->
-          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/logout">Logout</a>
         </div>
       </li>
@@ -94,61 +92,65 @@
       <li class="nav-item active">
         <div class="row">
             <div class="col-lg-12">
-                <div class="card mb-3">
+                <div class="card">
                   <!--<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">
                     Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
                   </div>-->
                   <h5 class="card-header">
                    <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="sidebarToggle" class="d-block">
-                    <img src="{% static 'img/front-truck.png' %}" style="height: 20px">
-                      <span id="text-vehc">Vehicle Information</span>&nbsp;<i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
+                   <div class="row">                   
+                    <img src="{% static 'img/front-truck.png' %}" style="height: 20px; margin-right: 5px;" />
+                    <p id="sideBarText" style="margin-right: 5px;">Vehicle Information</p>
+                    <i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
+                   </div>
+
                    </a>
                   </h5>
                   <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
                       <div class="card-body">
-                      <div class="form-group">
-                          <label >Chassis ID: {{data.chassisid}}</label>
+                              <div class="form-group">
+                          <label >Chassis ID: {{data.Chassis}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Event ID :  {{data.eventid}}</label>
+                          <label >ESN : {{data.ESN}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Engine Description :  {{data.eventdesc}} </label>
+                          <label >Engine Family : {{data.Engine_Family}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Date & Time :  {{data.timedate}}</label>
+                          <label >Model Year : {{data.Model_Year}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Engine Hours :  {{data.enginehours}}</label>
+                          <label >Breakdown of Engine Configuration : {{data.BOEC}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Engine Only :  {{data.engineonly}}</label>
-                      </div>
-                      <!-- <div class="form-group">
-                          <label >Truck Model :  {{data.truckmodel}}</label>
-                      </div>
-          
-                      <div class="form-group">
-                          <label >Current Software Level :  {{data.currentsoftwarelevel}}</label>
+                          <label >HP Rating : {{data.HP_Rating}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Last Software Level :  {{data.lastsoftwarelevel}}</label>
+                          <label >Truck Model : {{data.Truck_Model}}</label>
+                      </div>
+
+                      <div class="form-group">
+                          <label >Current Software Level : {{data.Current_Software_Level}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Transmission  Configuration: {{data.transmissionconfiguration}}</label>
+                          <label >Last Software Level : {{data.Last_Software_Level}}</label>
                       </div>
                       <div class="form-group">
-                          <label >Mileage : {{data.currentmileage}}</label>
+                          <label >Transmission  Configuration: {{data.plantdata.Transmission_Configuration}}</label>
                       </div>
                       <div class="form-group">
-                          <label >After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
-                      </div> -->
-                      <!-- <div class="form-group">
-                          <label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
-                      </div> -->
+                          <label >Mileage : {{data.plantdata.Mileage}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label >After Treatment Software Level : {{data.plantdata.After_Treatment_Softwate_Level}}</label>
+                      </div>
+                      <div class="form-group">
+                          <label>Rear Axle Ratio : {{data.plantdata.Rear_Axle_Ratio}}</label>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </p>
               </div>
         </div>
       </li>
@@ -166,11 +168,9 @@
 
 	  
 	</div>
-      <!-- /.container-fluid -->
-
       <!-- Sticky Footer -->
       <footer class="sticky-footer" style="border-top: solid 1px orange;color: gray;">
-        <div class="container" style="margin-top:2%;">
+        <div style="margin-top:2%;">
           <div class="copyright text-center my-auto font-weight-bold">
             <span>Copyright © Paccar Technical Center {% now 'Y' %}</span>
           </div>
@@ -198,7 +198,7 @@
     width: 285px !important;
 }
 footer.sticky-footer {
-    width: calc(100% - 285px);
+    width: calc(100% - 235px);
 }
 body.sidebar-toggled footer.sticky-footer {
     width: calc(100% - 175px);
@@ -222,13 +222,13 @@ body.sidebar-toggled footer.sticky-footer {
 
   <script>
     $('#sidebarToggle').click(function(){
-      $('#text-vehc').hide();
+      $('#sideBarText').hide();
     });
       $('#vinfo').on('hidden.bs.collapse', function () {
         // do something…
       })
       $('#vinfo').on('shown.bs.collapse', function () {
-        $('#text-vehc').show();
+        $('#sideBarText').show();
         // do something…
       })
       
