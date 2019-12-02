@@ -187,9 +187,15 @@ def service(request,chassisid, eventdata, engineonly):
             context['data'] = cep_data_information(chassisid,chassis_info['engineserialno'])
             template = 'form/CEP.html'
 <<<<<<< HEAD
+<<<<<<< HEAD
         elif(eventname == 'Chassis Build'):
             context['data'] = plant_data_information(chassisid,chassis_info['engineserialno'])
             template = 'form/Plant.html'
+=======
+        # elif(eventname == 'Chassis Build'):
+        #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
+        #     template = 'form/Case.html'
+>>>>>>> 374d829709a88776594d80b388214a079dd9d0c5
 =======
         # elif(eventname == 'Chassis Build'):
         #     context['data'] = plant_timeline(chassisid)  # QUERY NOT CORRECT !!
