@@ -12,7 +12,16 @@ def chassis_information(chassisid):
       con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
       cursor=con.cursor()
       cursor.execute("""select 
-                              d.*,c.engineserialno 
+                              d.*,
+                              c.engineserialno,
+                              c.enginefamilyname,
+                              c.enginemodelname,
+                              c.eniginemodelyear,
+                              c.breakdownengineconfiguration,
+                              c.hprating,
+                              c.truckmodel,
+                              c.currentsoftwarelevel,
+                              c.lastsoftwarelevel
                         from 
                               dim_chassis as d
                               join dim_engine c on d.chassisid = c.chassisid 
@@ -21,6 +30,7 @@ def chassis_information(chassisid):
 
       #cursor.execute("""select distinct dim_engine.chassisid,currentmileage, transmissionconfiguration, application,aftertreatmentsoftwarelevel,rearaxleration from dim_chassis on dim_chassis.chassisid=dim_engine.chassisid where dim_chassis.chassisid = '%s' or dim_engine.engineserialno = '%s' order by dim_chassis.chassisid""" % (chassisid,enginenum))
       df=cursor.fetchone()
+      #fields = [item[0] for item in cursor.description]
       cursor.close()
       record = {}
       if(df):
@@ -39,7 +49,6 @@ def chassis_information(chassisid):
          # record['currentmileage']            = df[10] if df[10] else ''
          # record['aftertreatmentsoftwarelevel']                  = df[11] if df[11] else ''
          # record['rearaxleratio']                  = df[12] if df[12] else ''
-
          record['chassisid']                    = df[0] if df[0] else ''
          record['orderprocessingdivision']      = df[1] if df[1] else ''
          record['transmissionconfiguration']    = df[2] if df[2] else ''
@@ -53,6 +62,16 @@ def chassis_information(chassisid):
          record['chassisbuildmonth']            = df[10] if df[10] else ''
          record['lastupdated']                  = df[11] if df[11] else ''
          record['engineserialno']               = df[12] if df[12] else ''
+         record['enginefamilyname']             = df[13] if df[13] else ''
+         record['enginemodelname']              = df[14] if df[14] else ''
+         record['eniginemodelyear']             = df[15] if df[15] else ''
+         record['breakdownengineconfiguration'] = df[16] if df[16] else ''
+         record['hprating']                     = df[17] if df[17] else ''
+         record['truckmodel']                   = df[18] if df[18] else ''
+         record['currentsoftwarelevel']         = df[19] if df[19] else ''
+         record['lastsoftwarelevel']            = df[20] if df[20] else ''
+
+
       return record
    except Exception as e:
       db_logger.exception(e)
