@@ -82,14 +82,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-AUTHENTICATION_DATABASE_NAME    = 'chassis'
-AUTHENTICATION_HOST             = 'chassis-cluster1.cmizplejoroy.us-east-1.redshift.amazonaws.com'
-AUTHENTICATION_USERNAME         = 'reimann'
-AUTHENTICATION_PASSWORD         = 'Manthan01'
-AUTHENTICATION_PORT             = '5439'
-
-
+'''
 DATABASES = {
     'default': {
         #'ENGINE': 'django_redshift_backend',
@@ -102,7 +95,7 @@ DATABASES = {
         'PORT': '5439',
     }
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
