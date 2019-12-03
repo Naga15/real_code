@@ -89,7 +89,7 @@ AUTHENTICATION_USERNAME         = 'reimann'
 AUTHENTICATION_PASSWORD         = 'Manthan01'
 AUTHENTICATION_PORT             = '5439'
 
-'''
+
 DATABASES = {
     'default': {
         #'ENGINE': 'django_redshift_backend',
@@ -102,7 +102,7 @@ DATABASES = {
         'PORT': '5439',
     }
 }
-'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
