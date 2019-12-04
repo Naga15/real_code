@@ -118,13 +118,16 @@ def dashboard(request):
                     I_Array.append(str(p['eventid'])+'--'+str(timedate))
 
                     if filter_x_axis == 'Week':
-                        timedate = timedate.strftime("%w %b %Y")
+                        #timedate = timedate.strftime("%w %b %Y")
+                        timedate = timedate.strftime("%d/%m/%Y")
                         X_Array.append('Week '+str(timedate))
                     elif filter_x_axis == 'Month':
-                        timedate = timedate.strftime("%b %Y")
+                        #timedate = timedate.strftime("%b %Y")
+                        timedate = timedate.strftime("%m/%Y")
                         X_Array.append(timedate)
                     else:
-                        timedate = timedate.strftime("%m/%d/%Y")
+                        #timedate = timedate.strftime("%m/%d/%Y")
+                        timedate = timedate.strftime("%d/%m/%Y")
                         X_Array.append(timedate)
                     #filter by Y Axis
                     if filter_y_axis == 'Hours':
@@ -147,9 +150,12 @@ def dashboard(request):
                         Color_Array.append('#dc3545')
                     else:
                         Color_Array.append('#17a2b8')
+                        
+                    # Show hours as hh:mm:ss in datapoint hovertext
+                    hover_hours = "{:.2f}".format(p['enginehours'])
 
-                    Recors_data.append({'id' : str(p['eventid'])+'--'+str(old_formate), 'eventdesc' : str(p['eventdesc']), 'timedate' : timedate, 'timeweek' : p['timeweek'], 'timecalendarweek' : p['timecalendarweek'], 'enginehours' : p['enginehours'],'eventid' : p['eventid']})
-                    hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(p['enginehours'])+'<br>')
+                    Recors_data.append({'id' : str(p['eventid'])+'--'+str(old_formate), 'eventdesc' : str(p['eventdesc']), 'timedate' : timedate, 'timeweek' : p['timeweek'], 'timecalendarweek' : p['timecalendarweek'], 'enginehours' : hover_hours,'eventid' : p['eventid']})
+                    hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(hover_hours)+'<br>')
                     FT_Array.append(p['eventdesc'])
 
                 context['data']         = chassis_information(filter_search)
