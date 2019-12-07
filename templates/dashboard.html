@@ -9,7 +9,7 @@
 
 <!-- Icon Cards-->
 <form method="POST" id="search-form" style="font-size: 14px;">
-<div class="row mx-auto">
+<div class="row">
 		{% csrf_token %}
 		<div class="col-lg-6">
 		  <div class=" card card-form">
@@ -45,72 +45,72 @@
 			</div>
 		</div>
 
+		<div class="col-lg-3">
+			<div class="card card-form" >
+				<!--<div class="card-header">Chart axis configuration</div>-->
+				<div class="card-body">
+					<div class="form-group">
+						<div class="form-row">
+							<div class="col-md-12">
+								<label >X Axis</label>
+								<div class="form-group">
+								<!-- Default inline 1-->
+									<div class="custom-control custom-radio custom-control-inline x-axis-info">
+										<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" {% if filter_x_axis == 'Day' %} checked {% endif %}>
+										<label class="custom-control-label" for="x-axis-1">Day</label>
+									</div>
 
-		<div class="col-lg-6">
-		  <div class="card card-form" >
-					<!--<div class="card-header">Chart axis configuration</div>-->
-					<div class="card-body">
-						<div class="form-group">
-							<div class="form-row">
-								<div class="col-md-12">
-										
-										<div class="form-group">
-												<div class="form-row">
-														
-														<div class="col-md-6">
-																<label >X Axis</label> 
-																<div class="form-group">
-																<!-- Default inline 1-->
-															<div class="custom-control custom-radio custom-control-inline ">
-																	<input type="radio" class="custom-control-input" id="x-axis-1" name="x-axis" value="Day" {% if filter_x_axis == 'Day' %} checked {% endif %}>
-																	<label class="custom-control-label" for="x-axis-1">Day</label>
-																</div>
-																
-																<!-- Default inline 2-->
-																<div class="custom-control custom-radio custom-control-inline">
-																	<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week" {% if filter_x_axis == 'Week' %} checked {% endif %}>
-																	<label class="custom-control-label" for="x-axis-2">Week</label>
-																</div>
-																
-																<!-- Default inline 3-->
-																<div class="custom-control custom-radio custom-control-inline">
-																	<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month" {% if filter_x_axis == 'Month' %} checked {% endif %}>
-																	<label class="custom-control-label" for="x-axis-3">Month</label>
-																</div>
-															</div>
-														</div>
-														<div class="col-md-6">
-																<label >Y Axis</label>
-																<div class="form-group">
-																	<div class="custom-control custom-radio custom-control-inline">
-																		<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" {% if filter_y_axis == 'Miles' %} checked {% endif %}>
-																		<label class="custom-control-label" for="y-axis-1">Miles</label>
-																	</div>
-																	
-																	<!-- Default inline 2-->
-																	<div class="custom-control custom-radio custom-control-inline">
-																		<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours" {% if filter_y_axis == 'Hours' %} checked {% endif %}>
-																		<label class="custom-control-label" for="y-axis-2">Hours</label>
-																	</div>
-																	
-																	<!-- Default inline 3-->
-																	<div class="custom-control custom-radio custom-control-inline">
-																		<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km" {% if filter_y_axis == 'Km' %} checked {% endif %}>
-																		<label class="custom-control-label" for="y-axis-3">Km</label>
-																	</div>
-																</div>
-														</div>
-												</div>			
-												
-										</div>
+									<!-- Default inline 2-->
+									<div class="custom-control custom-radio custom-control-inline x-axis-info">
+										<input type="radio" class="custom-control-input" id="x-axis-2" name="x-axis" value="Week" {% if filter_x_axis == 'Week' %} checked {% endif %}>
+										<label class="custom-control-label" for="x-axis-2">Week</label>
+									</div>
 
-										
+									<!-- Default inline 3-->
+									<div class="custom-control custom-radio custom-control-inline x-axis-info">
+										<input type="radio" class="custom-control-input" id="x-axis-3" name="x-axis" value="Month" {% if filter_x_axis == 'Month' %} checked {% endif %}>
+										<label class="custom-control-label" for="x-axis-3">Month</label>
+									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 				</div>
 			</div>
+		</div>
+	
+		<div class="col-lg-3">
+		  <div class="card card-form" >
+			<!--<div class="card-header">Chart axis configuration</div>-->
+			<div class="card-body">
+				<div class="form-group">
+					<div class="form-row">
+						<div class="col-md-12">
+							<label >Y Axis</label>
+							<div class="form-group">
+								<div class="custom-control custom-radio custom-control-inline y-axis-info">
+									<input type="radio" class="custom-control-input" id="y-axis-1" name="y-axis" value="Miles" {% if filter_y_axis == 'Miles' %} checked {% endif %}>
+									<label class="custom-control-label" for="y-axis-1">Miles</label>
+								</div>
+
+								<!-- Default inline 2-->
+								<div class="custom-control custom-radio custom-control-inline y-axis-info">
+									<input type="radio" class="custom-control-input" id="y-axis-2" name="y-axis" value="Hours" {% if filter_y_axis == 'Hours' %} checked {% endif %}>
+									<label class="custom-control-label" for="y-axis-2">Hours</label>
+								</div>
+
+								<!-- Default inline 3-->
+								<div class="custom-control custom-radio custom-control-inline y-axis-info">
+									<input type="radio" class="custom-control-input" id="y-axis-3" name="y-axis" value="Km" {% if filter_y_axis == 'Km' %} checked {% endif %}>
+									<label class="custom-control-label" for="y-axis-3">Km</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
 			</div>
+		</div>
 		
 	</div>
 </form>
