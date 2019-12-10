@@ -1,0 +1,70 @@
+iSQL Statement
+
+
+** VI INfo
+
+select ce.shortvin, enginefamilyname, engineserialno, enginemodelyear, breakdownengineconfiguration, currentmileage, hprating,
+truckmodel, currentsoftwarelevel, lastsoftwarelevel, transmissionconfiguration,
+aftertreatmentsoftwarelevel, rearaxleratio
+from dev.dim_chassis c
+join  dev.dim_engine ce on c.shortvin = ce.shortvin
+where c.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453'
+order by c.shortvin
+
+
+
+
+/* 1. Timeline chart */
+select t.shortvin, t.eventid, e.eventdesc, timedate, timeday, timeweek, timecalendarweek, mileage, mileagekm,
+enginehours, engineonly 
+from dev.fact_timeline t
+join dev.dim_event e on t.eventid = e.eventid
+join dev.dim_engine ce on t.shortvin = ce.shortvin
+where t.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453'
+order by t.timedate
+
+/* Engine Only */
+select t.shortvin, t.eventid, eventdesc, timedate, timeday, timeweek, timecalendarweek, mileage, mileagekm,
+enginehours, engineonly 
+from dev.fact_timeline t
+join dev.dim_event e on t.eventid = e.eventid
+join dev.dim_engine ce on t.shortvin = ce.shortvin
+where (t.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453') AND
+((t.engineonly = 1 and t.eventid in (3,4,5,7)) or t.engineonly is null and t.eventid not in (3,4,5,7))
+order by t.eventid
+
+/* 2. CEP Data */
+select ce.shortvin, engineserialno, enginefamilyname, enginemodelyear, breakdownengineconfiguration, currentmileage, hprating,
+truckmodel, currentsoftwarelevel, lastsoftwarelevel
+from dev.dim_chassis c 
+join dev.dim_engine ce on c.shortvin = ce.shortvin
+where c.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453'
+
+/* 3. Plant Data */
+select ce.shortvin, transmissionconfiguration, application, currentmileage, 
+aftertreatmentsoftwarelevel, rearaxleratio
+from dev.dim_chassis c 
+join dev.dim_engine ce on c.shortvin = ce.shortvin
+where c.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453'
+
+/* 4. Claim Info */
+select cl.claimid, dealerstory, propart, prolabor, proamount, campaignid, bulletlink, 
+partno, partdesc, partamount, partsource, partqty
+from dev.dim_claim cl join
+dev.dim_engine ce on cl.shortvin = ce.shortvin join
+dev.dim_claimparts cp on cp.claimid = cl.claimid
+where extract(year from cl.reportdate) = 2016 and
+extract(month from cl.reportdate) = 4 and
+extract(day from cl.reportdate) = 26 and
+(cl.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453')
+
+/* 5. Fault Code */
+select distinct f.faultcode, f.faultdesc, f.mileage 
+from dev.dim_faultcode f join
+dev.dim_chassis c on f.shortvin = c.shortvin join
+dev.dim_engine ce on c.shortvin = ce.shortvin
+Where extract(year from f.faultdate) = 2018 and
+extract(month from f.faultdate) = 5 and
+extract(day from f.faultdate) = 10 and
+(c.shortvin = 'GJ125225' or ce.engineserialno = 'Y094453')
+
