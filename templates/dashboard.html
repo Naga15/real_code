@@ -33,7 +33,7 @@
 										<button style="font-size: 14px;" type="submit" class="btn btn-primary">Search</button>
 										<button style="font-size: 14px;" type="button" class="btn btn-secondary" onclick="ClearForm()">Clear</button>
 									</div>
-										<div class="custom-control custom-checkbox col-xs-5" style="margin-top: 2rem;margin-left: 4rem;">
+										<div class="custom-control custom-checkbox col-xs-5" style="margin-top: 2rem;margin-left: 2rem;">
 											<input style="font-size: 14px;" type="checkbox" class="custom-control-input" id="defaultUnchecked" name="Engine_Only" {% if filter_Engine_Only %} checked {% endif %}>
 											<label style="font-size: 14px;" class="custom-control-label" for="defaultUnchecked">Engine Only</label>
 										    </div>									
@@ -44,6 +44,7 @@
 				</div>
 			</div>
 		</div>
+
 
 		<div class="col-lg-3">
 			<div class="card card-form" >
@@ -78,7 +79,6 @@
 				</div>
 			</div>
 		</div>
-	
 		<div class="col-lg-3">
 		  <div class="card card-form" >
 			<!--<div class="card-header">Chart axis configuration</div>-->
@@ -110,7 +110,7 @@
 				</div>
 				</div>
 			</div>
-		</div>
+			</div>
 		
 	</div>
 </form>
@@ -161,7 +161,12 @@
 	<div class="col-lg-12">
 			<div class=" card">
 					<div class="card-header">
-							<h5 class="card-title">Timeline Data</h5>
+						<div style="float:left"> Timeline Data </div>
+						<div class="text-right">
+							{% if isData == 'Yes'%}
+							<button type="button" class="btn btn-secondary" onclick="ExportCSV()"><i class="fa fa-file-export"></i> Export CSV</button>
+							{% endif %}
+						</div>
 					</div>
 					<div class="card-body">
 							<table class="table">
@@ -191,7 +196,7 @@
 																Plant Data
 														{% elif record.eventdesc == 'Warranty Claim' %}
 																Claim Info	
-														{% elif record.eventdesc == 'Fault code' %}
+														{% elif record.eventdesc == 'FC' %}
 																Fault code
 														{% else %}
 															{{record.eventdesc}}
@@ -236,7 +241,7 @@
 	 
 {% if isData == 'Yes'%}	  
 <script>
-var chassisid 					= '{{filter_search}}'
+var shortvin 					= '{{filter_search}}'
 var filter_Engine_Only 	= '{{filter_Engine_Only}}'
 var annotations 				= []
 var X_Array 						= JSON.parse('{{X_Array|safe}}')
@@ -335,7 +340,7 @@ function openFormPopup(eventid)
 	$("#loaderModal").modal();
 	$.ajax({
 		type: 'GET',
-		url: "/service/"+chassisid+"/"+eventid+"/"+filter_Engine_Only,
+		url: "/service/"+shortvin+"/"+eventid+"/"+filter_Engine_Only,
 		success:
 		function(data)
 		{
@@ -373,6 +378,8 @@ function ExportCSV()
 	var filter_search = '{{filter_search}}';
 	var filter_x_axis = '{{filter_x_axis}}';
 	var filter_y_axis = '{{filter_y_axis}}';
+	var filter_Engine_Only = '{{filter_Engine_Only}}';
+	var filter_Engine_Only = '{{filter_Engine_Only}}';
 	window.location = 'export-to-csv/'+filter_search+'/'+filter_x_axis+'/'+filter_y_axis+"/"+filter_Engine_Only;
 }
 </script>
