@@ -198,6 +198,7 @@ def fact_case_information(chassisid):
       db_logger.exception(e)
       return []
 
+'''
 #CEP Data information
 def cep_data_information(chassisid,engineserialno):
    try:
@@ -228,6 +229,63 @@ def cep_data_information(chassisid,engineserialno):
    except Exception as e:
       db_logger.exception(e)
       return []
+'''
+
+#CEP Data information
+def cep_data_information(chassisid,engineserialno):
+   try:
+      con = psycopg2.connect(database = settings.AUTHENTICATION_DATABASE_NAME, host=settings.AUTHENTICATION_HOST, port=settings.AUTHENTICATION_PORT, user =settings.AUTHENTICATION_USERNAME,password=settings.AUTHENTICATION_PASSWORD)
+      cursor=con.cursor()
+      cursor.execute("""SELECT DISTINCT  d.*,
+                              c.engineserialno,
+                              c.enginefamilyname,
+                              c.enginemodelname,
+                              c.eniginemodelyear,
+                              c.breakdownengineconfiguration,
+                              c.hprating,
+                              c.truckmodel,
+                              c.currentsoftwarelevel,
+                              c.lastsoftwarelevel
+                        FROM 
+                              dim_chassis  as d  
+                        JOIN dim_engine c on d.chassisid = c.chassisid 
+                        WHERE 
+                              d.chassisid = '%s'
+                              or 
+                              c.engineserialno = '%s'
+                        ORDER BY
+                              d.chassisid"""% (chassisid,engineserialno))
+      df=cursor.fetchone()
+      cursor.close()
+      record = {}
+      if(df):
+          record['chassisid'] = df[0] if df[0] else ''
+          record['orderprocessingdivision'] = df[1] if df[1] else ''
+          record['transmissionconfiguration'] = df[2] if df[2] else ''
+          record['application'] = df[3] if df[3] else ''
+          record['aftertreatmentsoftwarelevel'] = df[4] if df[4] else ''
+          record['vehicleidentificationnumber'] = df[5] if df[5] else ''
+          record['rearaxleratio'] = df[6] if df[6] else ''
+          record['inservicedate'] = df[7] if df[7] else ''
+          record['deliverydate'] = df[8] if df[8] else ''
+          record['currentmileage'] = df[9] if df[9] else ''
+          record['chassisbuildmonth'] = df[10] if df[10] else ''
+          record['lastupdated'] = df[11] if df[11] else ''
+          record['engineserialno'] = df[12] if df[12] else ''
+          record['enginefamilyname'] = df[13] if df[13] else ''
+          record['enginemodelname'] = df[14] if df[14] else ''
+          record['eniginemodelyear'] = df[15] if df[15] else ''
+          record['breakdownengineconfiguration'] = df[16] if df[16] else ''
+          record['hprating'] = df[17] if df[17] else ''
+          record['truckmodel'] = df[18] if df[18] else ''
+          record['currentsoftwarelevel'] = df[19] if df[19] else ''
+          record['lastsoftwarelevel'] = df[20] if df[20] else ''
+      return record
+   except Exception as e:
+      db_logger.exception(e)
+      return []
+
+
 
 #Plant Data information
 def plant_data_information(chassisid,engineserialno):
