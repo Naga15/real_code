@@ -100,8 +100,8 @@ def dashboard(request):
             #search chassis
             if 'Engine_Only' in request.POST:
                 filter_Engine_Only = 1
-            
-            results = search_chassis_timeline(filter_search,filter_Engine_Only)
+            chassis_info = chassis_information(filter_search)
+            results = search_chassis_timeline(filter_search, chassis_info['engineserialno'], filter_Engine_Only)
             if results:
                 I_Array     = []
                 X_Array     = []
@@ -111,7 +111,7 @@ def dashboard(request):
                 Color_Array = []
                 Recors_data = []
                 for record in results:
-                    p = {'chassisid' : record[0], 'eventdesc' : record[1].strip(), 'timedate' : record[2], 'timeday' : record[3], 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+                    p = {'shortvin' : record[0], 'eventid' : record[1], 'eventdesc' : record[2].strip(), 'timedate' : record[3], 'timeday' : record[4], 'timeweek' : record[5], 'timecalendarweek' : record[6], 'mileage' : record[7], 'mileagekm' : record[8], 'enginehours' : record[9], 'engineonly' : record[10]}
                     timedate    = p['timedate']
                     old_formate = timedate      
                     #I_Array.append(str(p['eventid']))
@@ -126,7 +126,6 @@ def dashboard(request):
                         timedate = timedate.strftime("%m/%Y")
                         X_Array.append(timedate)
                     else:
-                        #timedate = timedate.strftime("%m/%d/%Y")
                         timedate = timedate.strftime("%d/%m/%Y")
                         X_Array.append(timedate)
                     #filter by Y Axis
@@ -146,11 +145,11 @@ def dashboard(request):
                         Color_Array.append('#ffc107')
                     elif(str(p['eventdesc']) == 'Warranty Claim'):
                         Color_Array.append('#28a745')
-                    elif(str(p['eventdesc']) == 'Fault code'):
+                    elif(str(p['eventdesc']) == 'FC'):
                         Color_Array.append('#dc3545')
                     else:
                         Color_Array.append('#17a2b8')
-                        
+
                     # Show hours as hh:mm:ss in datapoint hovertext
                     hover_hours = "{:.2f}".format(p['enginehours'])
 
@@ -181,36 +180,36 @@ def dashboard(request):
 #get_chart
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def service(request,chassisid, eventdata, engineonly):
+def service(request,shortvin, eventdata, engineonly):
     context = {}
     #chassis event information
     eventdata   = eventdata.split('--')
     eventid     = eventdata[0]
     eventdate   = eventdata[1]
-    result = chassis_event_information(chassisid,eventid)
+    result = chassis_event_information(eventid)
     if result:
         eventname       = str(result[1])
-        chassis_info    = chassis_information(chassisid)
+        chassis_info    = chassis_information(shortvin)
         if(eventname == 'Engine Build'):
-            context['data'] = cep_data_information(chassisid,chassis_info['engineserialno'])
+            context['data'] = cep_data_information(shortvin, chassis_info['engineserialno'])
             template = 'form/CEP.html'
         elif(eventname == 'Chassis Build'):
-            context['data'] = plant_data_information(chassisid,chassis_info['engineserialno'])
+            context['data'] = plant_data_information(shortvin, chassis_info['engineserialno'])
             template = 'form/Plant.html'
         elif(eventname == 'Warranty Claim'):
-            context['results']  = claim_information(chassisid,chassis_info['engineserialno'],eventdate)
+            context['results']  = claim_information(shortvin,chassis_info['engineserialno'], eventdate)
             template = 'form/Claim.html'
-        elif(eventname == 'Fault code'):
-            context['data'] = fault_code_information(chassisid,chassis_info['engineserialno'],eventdate)
+        elif(eventname == 'FC'):
+            context['data'] = fault_code_information(shortvin,chassis_info['engineserialno'],eventdate)
             template = 'form/Fault_code.html'
-        elif(eventname == 'basic W'):
-            context['data'] = chassis_information(chassisid)
+        elif(eventname == 'Basic Warranty Period'):
+            context['data'] = chassis_information(shortvin)
             template = 'form/Case.html'
-        elif(eventname == 'basicE'):
-            context['data'] = chassis_information(chassisid)
+        elif(eventname == 'Basic Engine Warranty Period'):
+            context['data'] = chassis_information(shortvin)
             template = 'form/Case.html'
         else:
-            context['data'] = chassis_information(chassisid)
+            context['data'] = chassis_information(shortvin)
             template = 'form/Case.html'
         context['service']  = result
         context['title']    = result[1]
@@ -219,31 +218,35 @@ def service(request,chassisid, eventdata, engineonly):
     else:
         return HttpResponse('Invalid Request')
 
-
 #Data export to csv
 @login_required(login_url="/login")  # - if not logged in redirect to /
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def export_to_csv(request,token,x_axis,y_axis,engineonly):
-    #search chassis
-    results = search_chassis_timeline(token,engineonly)
+def export_to_csv(request, token, x_axis, y_axis, engineonly):
+    chassis_info = chassis_information(token)
+    results = search_chassis_timeline(token, chassis_info['engineserialno'], engineonly)
     if results:
-        X_Array     = []
-        Y_Array     = []
-        hovertext   = []
+        Recors_data = []
+        X_Array = []
+        Y_Array = []
         for record in results:
-            p = {'chassisid' : record[0].strip(), 'eventdesc' : record[1].strip(), 'timedate' : record[2].strip(), 'timeday' : record[3].strip(), 'timeweek' : record[4], 'timecalendarweek' : record[5], 'mileage' : record[6], 'mileagekm' : record[7], 'enginehours' : record[8], 'engineonly' : record[9], 'eventid' : record[10]}
+            p = {'shortvin': record[0], 'eventid': record[1], 'eventdesc': record[2].strip(), 'timedate': record[3],
+                 'timeday': record[4], 'timeweek': record[5], 'timecalendarweek': record[6], 'mileage': record[7],
+                 'mileagekm': record[8], 'enginehours': record[9], 'engineonly': record[10]}
             timedate = p['timedate']
-            #filter by X Axis
+            old_formate = timedate
+
+            # filter by X Axis
             if x_axis == 'Week':
-                timedate = timedate.strftime("%w %b %Y")
-                X_Array.append('Week '+str(timedate))
+                timedate = timedate.strftime("%d/%m/%Y")
+                X_Array.append('Week ' + str(timedate))
             elif x_axis == 'Month':
-                timedate = timedate.strftime("%b %Y")
+                timedate = timedate.strftime("%m/%Y")
                 X_Array.append(timedate)
             else:
-                timedate = timedate.strftime("%m/%d/%Y")
+                timedate = timedate.strftime("%d/%m/%Y")
                 X_Array.append(timedate)
-            #filter by Y Axis
+
+            # filter by Y Axis
             if y_axis == 'Hours':
                 hours = p['enginehours']
                 Y_Array.append(hours)
@@ -253,16 +256,33 @@ def export_to_csv(request,token,x_axis,y_axis,engineonly):
             else:
                 Y_Array.append(p['mileage'])
 
-            hovertext.append(str(p['eventdesc'])+' /n Date : '+str(timedate)+'/n Week : '+str(p['timeweek'])+' /n Calendar Week : '+str(p['timecalendarweek'])+' /n Hours : '+str(p['enginehours']))
-        
+            hover_hours = "{:.2f}".format(p['enginehours'])
+
+            Recors_data.append({'eventdesc': str(p['eventdesc']),
+                                'timedate': timedate, 'timeweek': p['timeweek'],
+                                'timecalendarweek': p['timecalendarweek'], 'enginehours': hover_hours,
+                                'eventid': p['eventid']})
+
         response = HttpResponse(content_type='text/csv')
         filename = str(token)+'-Chassis-History-'+str(datetime.now())
         response['Content-Disposition'] = 'attachment; filename="'+str(filename)+'.csv"'
         writer = csv.writer(response)
-        writer.writerow([x_axis, y_axis])
-        if X_Array:
-            for x in range(len(X_Array)):
-                writer.writerow([X_Array[x], Y_Array[x]])
+        writer.writerow(['Service','Date','Week','Calender Week', 'Hours',
+                         #'X-axis[' + x_axis + ']',
+                         #'Y-axis[' + y_axis + ']'
+                         ])
+        if Recors_data:
+            #counter = 0
+            for record in Recors_data:
+                writer.writerow([record['eventdesc'],
+                                record['timedate'],
+                                record['timeweek'],
+                                record['timecalendarweek'],
+                                record['enginehours'],
+                                #X_Array[counter],
+                                #Y_Array[counter]
+                                ])
+                #counter = counter + 1
         return response
 
 #data export to pdf
