@@ -101,71 +101,74 @@ def dashboard(request):
             if 'Engine_Only' in request.POST:
                 filter_Engine_Only = 1
             chassis_info = chassis_information(filter_search)
-            results = search_chassis_timeline(filter_search, chassis_info['engineserialno'], filter_Engine_Only)
-            if results:
-                I_Array     = []
-                X_Array     = []
-                Y_Array     = []
-                FT_Array    = []
-                hovertext   = []
-                Color_Array = []
-                Recors_data = []
-                for record in results:
-                    p = {'shortvin' : record[0], 'eventid' : record[1], 'eventdesc' : record[2].strip(), 'timedate' : record[3], 'timeday' : record[4], 'timeweek' : record[5], 'timecalendarweek' : record[6], 'mileage' : record[7], 'mileagekm' : record[8], 'enginehours' : record[9], 'engineonly' : record[10]}
-                    timedate    = p['timedate']
-                    old_formate = timedate      
-                    #I_Array.append(str(p['eventid']))
-                    I_Array.append(str(p['eventid'])+'--'+str(timedate))
+            if chassis_info:
+                results = search_chassis_timeline(filter_search, chassis_info['engineserialno'], filter_Engine_Only)
+                if results:
+                    I_Array     = []
+                    X_Array     = []
+                    Y_Array     = []
+                    FT_Array    = []
+                    hovertext   = []
+                    Color_Array = []
+                    Recors_data = []
+                    for record in results:
+                        p = {'shortvin' : record[0], 'eventid' : record[1], 'eventdesc' : record[2].strip(), 'timedate' : record[3], 'timeday' : record[4], 'timeweek' : record[5], 'timecalendarweek' : record[6], 'mileage' : record[7], 'mileagekm' : record[8], 'enginehours' : record[9], 'engineonly' : record[10]}
+                        timedate    = p['timedate']
+                        old_formate = timedate
+                        #I_Array.append(str(p['eventid']))
+                        I_Array.append(str(p['eventid'])+'--'+str(timedate))
 
-                    if filter_x_axis == 'Week':
-                        #timedate = timedate.strftime("%w %b %Y")
-                        timedate = timedate.strftime("%d/%m/%Y")
-                        X_Array.append('Week '+str(timedate))
-                    elif filter_x_axis == 'Month':
-                        #timedate = timedate.strftime("%b %Y")
-                        timedate = timedate.strftime("%m/%Y")
-                        X_Array.append(timedate)
-                    else:
-                        timedate = timedate.strftime("%d/%m/%Y")
-                        X_Array.append(timedate)
-                    #filter by Y Axis
-                    if filter_y_axis == 'Hours':
-                        hours = p['enginehours']
-                        Y_Array.append(hours)
-                    elif filter_y_axis == 'Km':
-                        km = p['mileagekm']
-                        Y_Array.append(km)
-                    else:
-                        Y_Array.append(p['mileage'])
+                        if filter_x_axis == 'Week':
+                            #timedate = timedate.strftime("%w %b %Y")
+                            timedate = timedate.strftime("%d/%m/%Y")
+                            X_Array.append('Week '+str(timedate))
+                        elif filter_x_axis == 'Month':
+                            #timedate = timedate.strftime("%b %Y")
+                            timedate = timedate.strftime("%m/%Y")
+                            X_Array.append(timedate)
+                        else:
+                            timedate = timedate.strftime("%d/%m/%Y")
+                            X_Array.append(timedate)
+                        #filter by Y Axis
+                        if filter_y_axis == 'Hours':
+                            hours = p['enginehours']
+                            Y_Array.append(hours)
+                        elif filter_y_axis == 'Km':
+                            km = p['mileagekm']
+                            Y_Array.append(km)
+                        else:
+                            Y_Array.append(p['mileage'])
 
-                    #color code
-                    if(str(p['eventdesc']) == 'Engine Build'):
-                        Color_Array.append('#007bff')
-                    elif(str(p['eventdesc']) == 'Chassis Build'):
-                        Color_Array.append('#ffc107')
-                    elif(str(p['eventdesc']) == 'Warranty Claim'):
-                        Color_Array.append('#28a745')
-                    elif(str(p['eventdesc']) == 'FC'):
-                        Color_Array.append('#dc3545')
-                    else:
-                        Color_Array.append('#17a2b8')
+                        #color code
+                        if(str(p['eventdesc']) == 'Engine Build'):
+                            Color_Array.append('#007bff')
+                        elif(str(p['eventdesc']) == 'Chassis Build'):
+                            Color_Array.append('#ffc107')
+                        elif(str(p['eventdesc']) == 'Warranty Claim'):
+                            Color_Array.append('#28a745')
+                        elif(str(p['eventdesc']) == 'FC'):
+                            Color_Array.append('#dc3545')
+                        else:
+                            Color_Array.append('#17a2b8')
 
-                    # Show hours as hh:mm:ss in datapoint hovertext
-                    hover_hours = "{:.2f}".format(p['enginehours'])
+                        # Show hours as hh:mm:ss in datapoint hovertext
+                        hover_hours = "{:.2f}".format(p['enginehours'])
 
-                    Recors_data.append({'id' : str(p['eventid'])+'--'+str(old_formate), 'eventdesc' : str(p['eventdesc']), 'timedate' : timedate, 'timeweek' : p['timeweek'], 'timecalendarweek' : p['timecalendarweek'], 'enginehours' : hover_hours,'eventid' : p['eventid']})
-                    hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(hover_hours)+'<br>')
-                    FT_Array.append(p['eventdesc'])
+                        Recors_data.append({'id' : str(p['eventid'])+'--'+str(old_formate), 'eventdesc' : str(p['eventdesc']), 'timedate' : timedate, 'timeweek' : p['timeweek'], 'timecalendarweek' : p['timecalendarweek'], 'enginehours' : hover_hours,'eventid' : p['eventid']})
+                        hovertext.append(str(p['eventdesc'])+'<br>Date : '+str(timedate)+'<br>Week : '+str(p['timeweek'])+'<br>Calendar Week : '+str(p['timecalendarweek'])+'<br>Hours : '+str(hover_hours)+'<br>')
+                        FT_Array.append(p['eventdesc'])
 
-                context['data']         = chassis_information(filter_search)
-                context['X_Array']      = json.dumps(X_Array)
-                context['Y_Array']      = json.dumps(Y_Array)
-                context['I_Array']      = json.dumps(I_Array)
-                context['hovertext']    = json.dumps(hovertext)
-                context['FT_Array']     = json.dumps(FT_Array)
-                context['Color_Array']  = json.dumps(Color_Array)
-                context['Recors_data']  = Recors_data
-                isData = 'Yes'
+                    context['data']         = chassis_information(filter_search)
+                    context['X_Array']      = json.dumps(X_Array)
+                    context['Y_Array']      = json.dumps(Y_Array)
+                    context['I_Array']      = json.dumps(I_Array)
+                    context['hovertext']    = json.dumps(hovertext)
+                    context['FT_Array']     = json.dumps(FT_Array)
+                    context['Color_Array']  = json.dumps(Color_Array)
+                    context['Recors_data']  = Recors_data
+                    isData = 'Yes'
+                else:
+                    DefaultMessage = 'Vehicle Information not found, Please try with other Chassis ID / ESN.'
             else:
                 DefaultMessage = 'Vehicle Information not found, Please try with other Chassis ID / ESN.'
 
