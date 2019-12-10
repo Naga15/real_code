@@ -294,9 +294,9 @@ def fault_code_information(shortvin,engineserialno,eventdate):
       query = ("""  
                SELECT DISTINCT  
                f.faultcode, f.faultdesc, f.mileage  
-               from dev.dim_faultcode f  
-               JOIN dev.dim_chassis c on f.shortvin = c.shortvin  
-               JOIN dev.dim_engine ce on c.shortvin = ce.shortvin   
+               from dim_faultcode f  
+               JOIN dim_chassis c on f.shortvin = c.shortvin  
+               JOIN dim_engine ce on c.shortvin = ce.shortvin   
                WHERE  
                extract(year from f.faultdate) = '%s'  
                AND  
