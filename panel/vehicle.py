@@ -247,14 +247,14 @@ def cep_data_information(chassisid,engineserialno):
                               c.currentsoftwarelevel,
                               c.lastsoftwarelevel
                         FROM 
-                              dim_chassis  as d  
-                        JOIN dim_engine c on d.chassisid = c.chassisid 
+                              dev.dim_chassis  as d  
+                        JOIN dev.dim_engine c on d.shortvin  = c.shortvin  
                         WHERE 
-                              d.chassisid = '%s'
+                              d.shortvin  = '%s'
                               or 
                               c.engineserialno = '%s'
                         ORDER BY
-                              d.chassisid"""% (chassisid,engineserialno))
+                              d.shortvin"""% (chassisid,engineserialno))
       df=cursor.fetchone()
       cursor.close()
       record = {}
