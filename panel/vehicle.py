@@ -14,7 +14,9 @@ def chassis_information(shortvin):
       query = ("""SELECT c.*, ce.* 
                 FROM dim_chassis as c 
                         JOIN dim_engine ce ON c.shortvin = ce.shortvin  
-                        WHERE c.shortvin = '%s'""" % (shortvin))
+                        WHERE c.shortvin = '%s'
+                        or ce.engineserialno = '%s'
+                        """ % (shortvin, shortvin))
       cursor.execute(query)
       df=cursor.fetchone()
       cursor.close()
@@ -324,3 +326,4 @@ def fault_code_information(shortvin,engineserialno,eventdate):
    except Exception as e:
       db_logger.exception(e)
       return []
+
