@@ -1,102 +1,126 @@
 {% load static %}
 <!DOCTYPE html>
+<!-- HTML start -->
 <html lang="en">
-
+<!-- Head start -->
 <head>
-
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <title>PACCAR Solutions</title>
-
-  <!-- Custom fonts for this template-->
-  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
-
-  <!-- Custom styles for this template-->
-  <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
-
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>PACCAR Solutions</title>
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+<!-- Head end -->
 </head>
 
+<!-- Body start -->
 <body class="bg-dark bg-dark-bg">
+<!-- container start -->
+<div class="container">
+    <!-- card start -->
+    <div class="card card-login mx-auto mt-6">
+        <!-- Main heading start -->
+        <div class="card-header loginbox_bg">
+            <div class="text-center"><h2 class="card_heading">Paccar Technical Center</h1></div>
+        <!-- Main heading end -->
+        </div>
+        <!--
+        <div class="card-header"><div class="text-center"><img src="{% static 'img/logo1.png' %}"></div></div>
+        -->
 
-  <div class="container">
+        <!-- card-body start -->
+        <div class="card-body">
 
+            <!-- Form start -->
+            <form method="post">
 
-    <div class="card card-login mx-auto mt-6" style="box-shadow: 0 20px 20px 0 rgba(0, 0, 0, 0.2), 0 20px 20px 0 rgba(0, 0, 0, 0.19);">
-<div class="card-header" style="
-    background: #9C27B0;
-    background-image: linear-gradient(45deg, #03A9F4, transparent);
+                {% csrf_token %}
+                <!-- If messages available -->
+                {% if messages %}
+                <!-- For loop start -->
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div class="alert alert-danger">{{ message|safe }}</div>
+                {% else%}
+                <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+                {% endif %}
+                <!-- For loop end -->
+                {% endfor %}
+                <!-- endif -->
+                {% endif %}
 
+                <!-- If errors available -->
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <h4>Please fix the following errors</h4>
+                    <ul>
+                        <!-- For loop start -->
+                        {% for field in form %}
+                            <!-- If field errors available -->
+                            {% if field.errors %}
+                                <!-- For loop start -->
+                                {% for error in field.errors %}
+                                    <li><a href="#id_{{ field.name }}" class="error">{{ field.name }} - {{ error|escape }}</a></li>
+                                <!-- For loop end -->
+                                {% endfor %}
+                            <!-- endif -->
+                            {% endif %}
+                        <!-- For loop end -->
+                        {% endfor %}
+                    </ul>
+                    {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                    {% endif %}
+                </div>
+                <!-- endif -->
+                {% endif %}
 
-"><div class="text-center"><h2 style="
-    font-style: italic;
-    color: white;
-    text-shadow: 2px 2px 4px darkblue;
-">Paccar Technical Center</h1></div></div>
-<!--      <div class="card-header"><div class="text-center"><img src="{% static 'img/logo1.png' %}"></div></div>
-   
--->
-   <div class="card-body">
-		<form method="post">
-			{% csrf_token %}
-			{% if messages %}
-				{% for message in messages %}
-					{% if message.tags == 'error' %}
-					<div class="alert alert-danger">{{ message|safe }}</div>
-					{% else%}
-					<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
-					{% endif %}
-				{% endfor %}
-			{% endif %}
-			{% if form.errors %}
-				<div class="alert alert-danger">
-					<h4>Please fix the following errors</h4>
-					<ul>
-					{% for field in form %}
-						{% if field.errors %}
-							{% for error in field.errors %}
-								<li><a href="#id_{{ field.name }}" class="error">{{ field.name }} - {{ error|escape }}</a></li>
-							{% endfor %}
-						{% endif %}
-					{% endfor %}
-					</ul>
-					{% if form.non_field_errors %}
-						{{ form.non_field_errors }}
-					{% endif %}
-				</div>
-			{% endif %}
-				  
-			{% for field in form.visible_fields %}
-				<div class="input-group mb-3">
-					<div class="input-group-prepend">
-						{% if field.field.widget.input_type == 'password' %}
-							<span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-lock"></i></span>
-						{% else %}
-							<span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-user"></i></span>
-						{% endif %}
-					</div>
-					<input id="id_{{ field.name }}" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" aria-describedby="id_{{ field.name }}" class="form-control" value="{{ field.value|default_if_none:'' }}" required="required" autofocus="autofocus" placeholder="{{ field.field.widget.attrs.placeholder }}"/>
-				</div>
-			{% endfor %}
-			<button type="submit" class="btn btn-primary btn-block">Login</button>
-			{% for hidden_field in form.hidden_fields %}
-				{{ hidden_field }}
-			{% endfor %}
-        </form>
-      </div>
+                <!-- For loop start -->
+                {% for field in form.visible_fields %}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <!-- If input is password available -->
+                        {% if field.field.widget.input_type == 'password' %}
+                        <span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-lock"></i></span>
+                        {% else %}
+                        <span class="input-group-text" id="id_{{ field.name }}"><i class="fas fa-fw fa-user"></i></span>
+                        <!-- end if -->
+                        {% endif %}
+                    </div>
+                    <input id="id_{{ field.name }}" type="{{ field.field.widget.input_type }}" name="{{ field.name }}"
+                           aria-describedby="id_{{ field.name }}" class="form-control"
+                           value="{{ field.value|default_if_none:'' }}" required="required" autofocus="autofocus"
+                           placeholder="{{ field.field.widget.attrs.placeholder }}"/>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+
+                <!-- For loop end -->
+                {% endfor %}
+
+            <!-- Form end -->
+            </form>
+        <!-- card-body end -->
+        </div>
+    <!-- card end -->
     </div>
-  </div>
+<!-- container end -->
+</div>
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
-  <!-- Core plugin JavaScript-->
-  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-
+<!-- Body end -->
 </body>
-
+<!-- HTML end -->
 </html>

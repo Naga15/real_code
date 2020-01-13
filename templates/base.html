@@ -1,281 +1,195 @@
 {% load static %}
 <!DOCTYPE html>
+<!-- HTML start -->
 <html lang="en">
+<!-- Head start -->
 <head>
-
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <title>PACCAR Solutions - {% block title %}{{ request.path_info | slugify }}{% comment %}{{ request.build_absolute_uri }}{% endcomment %}{% endblock %}</title>
-
-  <!-- Custom fonts for this template-->
-  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
-
-  <!-- Page level plugin CSS-->
-  <link href="{% static 'vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
-
-  <!-- Custom styles for this template-->
-  <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<style>
-
-.card-header a{
-  font-size: 1rem;
-  color: black;
-  font-weight: normal;
-}
-.card-header .fa {
-  transition: .3s transform ease-in-out;
-  color: black;
-}
-.card-header .collapsed .fa {
-  transform: rotate(180deg);
-}
-
-#vinfo {
-  font-size: 14px;
-}
-	
-/* for Responsive footer */
-/* -----------START---------- */
-#content-wrapper{
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-bottom: 0px !important;
-}
-footer{
-    background-color: #f2f2f2;
-    margin-top: 20px;
-    padding: 20px;
-}
-/* -----------END---------- */
-
-/* To display x axis and y axis info in one line like day, week, year and miles, hours, km */
-.x-axis-info, .y-axis-info {
-    margin-right: 0.4rem;
-}
-	
-</style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>PACCAR Solutions - {% block title %}{{ request.path_info | slugify }}{% comment %}{{
+        request.build_absolute_uri }}{% endcomment %}{% endblock %}</title>
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- Head end -->
 </head>
 
+<!-- Body start -->
 <body id="page-top">
 
-  <nav class="navbar navbar-expand navbar-dark bg-blue static-top">
-
-    <a class="navbar-brand mr-1" href="/dashboard"> 
-      <!--<img src="{% static 'img/logo1.png' %}"></div>-->
-      
+<!-- navbar start -->
+<nav class="navbar navbar-expand navbar-dark bg-blue static-top">
+    <!-- Left Side header -->
+    <a class="navbar-brand mr-1" href="/dashboard">
+        <!--<img src="{% static 'img/logo1.png' %}"></div>-->
         <div class="text-center">
-          <h2 style="font-style: italic;color: white;font-variant: slashed-zero;text-shadow: 10px 10px 10px #212529;font-size: 18px;">
-            Paccar Technical Center
-          </h2>
-          
+            <h2 class="main_heading"> Paccar Technical Center</h2>
         </div>
     </a>
-    <div class="d-inline text-center" style="margin-left:30%">
-        <small style="/* font-style: italic; */color: orange;text-shadow: 2px 2px 4px #007bff;font-size: 18px;font-variant: petite-caps;">
-            Chassis History
-        </small>
-        
-      </div>
+    <!-- Middle header -->
+    <div class="d-inline text-center margin_left30">
+        <small class="center_heading">Chassis History</small>
+    </div>
     <!--<button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
     </button>-->
 
     <!-- Navbar Search -->
-    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-      
-    </form>
-
+    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"></form>
     <!-- Navbar -->
+
+    <!-- navbar drop down start -->
     <ul class="navbar-nav ml-auto ml-md-0">
-      <li class="nav-item dropdown no-arrow">
-        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span style="color: white;">{{ user.first_name }} {{ user.last_name }}</span> <i class="fas fa-user-circle fa-fw"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          <!--<a class="dropdown-item" href="/dashboard">Settings</a>-->
-          <a class="dropdown-item" href="/logout">Logout</a>
-        </div>
-      </li>
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                <span class="color_white">{{ user.first_name }} {{ user.last_name }}</span> <i
+                    class="fas fa-user-circle fa-fw"></i>
+            </a>
+            <!-- Dropdown menu start -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <!--<a class="dropdown-item" href="/dashboard">Settings</a>-->
+                <a class="dropdown-item" href="/logout">Logout</a>
+            <!-- Dropdown menu end -->
+            </div>
+        </li>
+    <!-- navbar drop down end -->
     </ul>
+<!-- navbar end -->
+</nav>
 
-  </nav>
-
-  <div id="wrapper">
-
-    <!-- Sidebar -->
+<!-- wrapper start -->
+<div id="wrapper">
+    <!-- Sidebar start -->
     <ul class="sidebar navbar-nav" id="mainNav">
+        <li class="nav-item active">
+            <!-- row start -->
+            <div class="row">
+                <!-- col-lg-12 start -->
+                <div class="col-lg-12">
+                    <!-- card start -->
+                    <div class="card mb-3">
+                        <!--<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">
+                          Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
+                        </div>-->
+                        <!-- Sidebar heading start -->
+                        <h5 class="card-header">
+                            <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo"
+                               id="sidebarToggle" class="d-block">
+                                <img src="{% static 'img/front-truck.png' %}" class="height20">
+                                <span id="text-vehc">Vehicle Information</span>&nbsp;<i
+                                    class="fa fa-chevron-left pull-right"></i><i
+                                    class="fa fa-chevron-left pull-right"></i>
+                            </a>
+                        <!-- Sidebar heading end -->
+                        </h5>
 
-      <li class="nav-item active">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card mb-3">
-                  <!--<div class="card-header" data-toggle="collapse" href="#vinfo" aria-expanded="false" aria-controls="vinfo">
-                    Vehicle Information <i class="fa fa-chevron-down pull-right"></i>
-                  </div>-->
-                  <h5 class="card-header">
-                   <a data-toggle="collapse" href="#vinfo" aria-expanded="true" aria-controls="vinfo" id="sidebarToggle" class="d-block">
-                    <img src="{% static 'img/front-truck.png' %}" style="height: 20px">
-                      <span id="text-vehc">Vehicle Information</span>&nbsp;<i class="fa fa-chevron-left pull-right"></i><i class="fa fa-chevron-left pull-right"></i>
-                   </a>
-                  </h5>
-                  <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">  
-                      <div class="card-body">
-                      <div class="form-group">
-                          <label >Chassis ID: {{data.shortvin}}</label>
-                      </div>
-                    <div class="form-group">
-                        <label >ESN : {{data.engineserialno}}</label>
+                        <!-- Sidebar information start -->
+                        <div id="vinfo" class="collapse show" aria-labelledby="heading-vinfo">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Chassis ID: {{data.shortvin}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>ESN : {{data.engineserialno}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Engine Family : {{data.enginefamilyname}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Model Year : {{data.enginemodelyear}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Breakdown of Engine Configuration :
+                                        {{data.breakdownengineconfiguration}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>HP Rating : {{data.hprating}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Truck Model : {{data.truckmodel}}</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Current Software Level : {{data.currentsoftwarelevel}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Software Level : {{data.lastsoftwarelevel}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Transmission Configuration: {{data.transmissionconfiguration}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mileage : {{data.currentmileage}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
+                                </div>
+                            </div>
+                        <!-- Sidebar information end -->
+                        </div>
+                    <!-- card end -->
                     </div>
-                    <div class="form-group">
-                        <label >Engine Family : {{data.enginefamilyname}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Model Year : {{data.enginemodelyear}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Breakdown of Engine Configuration : {{data.breakdownengineconfiguration}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >HP Rating : {{data.hprating}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Truck Model : {{data.truckmodel}}</label>
-                    </div>
-        
-                    <div class="form-group">
-                        <label >Current Software Level : {{data.currentsoftwarelevel}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Last Software Level : {{data.lastsoftwarelevel}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Transmission  Configuration: {{data.transmissionconfiguration}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >Mileage : {{data.currentmileage}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label >After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
-                    </div>
-                    <div class="form-group">
-                        <label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
-                    </div>
-                    </div>
-                  </div>
+                <!-- col-lg-12 end -->
                 </div>
-              </div>
-        </div>
-      </li>
+            <!-- row end -->
+            </div>
+        </li>
+    <!-- Sidebar end -->
     </ul>
 
-	<div id="content-wrapper">
+     <!-- content-wrapper start -->
+    <div id="content-wrapper">
+        <!-- container-fluid start -->
+        <div class="container-fluid">
+            {% block content %}
+            Body Content
+            {% endblock %}
+        <!-- container-fluid end -->
+        </div>
 
-      <div class="container-fluid">
+        <!-- Footer start -->
+        <footer>
+            <div class="copyright text-center my-auto font-weight-bold">
+                <span>Copyright © Paccar Technical Center {% now 'Y' %}</span>
+            </div>
+        <!-- Footer end -->
+        </footer>
 
-	
-
-		{% block content %}
-			Body Content
-		{% endblock %}
-
-	  
-	</div>
-      <!-- /.container-fluid -->
-
-	<footer style="border-top: solid 1px orange;color: gray;">
-	    <div class="copyright text-center my-auto font-weight-bold">
-		<span>Copyright © Paccar Technical Center {% now 'Y' %}</span>
-	    </div>
-	</footer>
-
+    <!-- content-wrapper end -->
     </div>
-    <!-- /.content-wrapper -->
+<!--  wrapper end -->
+</div>
 
-  </div>
-  <!-- /#wrapper -->
-
-  <!-- Scroll to Top Button-->
-  <a class="scroll-to-top rounded" href="#page-top">
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
-  </a>
+</a>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'js/sb-admin.min.js' %}"></script>
+<!-- Common.js-->
+<script src="{% static 'js/common.js' %}"></script>
 
-<style type="text/css">
-.sidebar.toggled {
-    overflow: visible;
-    width: 100px !important;
-}
-.sidebar {
-    overflow: visible;
-    width: 285px !important;
-}
-footer.sticky-footer {
-    width: calc(100% - 285px);
-}
-body.sidebar-toggled footer.sticky-footer {
-    width: calc(100% - 175px);
-}
-</style>
-  <!-- Bootstrap core JavaScript-->
-  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-  <!-- Core plugin JavaScript-->
-  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
-
-  <!-- Custom scripts for all pages-->
-  <script src="{% static 'js/sb-admin.min.js' %}"></script>
-
-  <!-- Common.js-->
-  <script src="{% static 'js/common.js' %}"></script>
-
-  <script>
-    $('#sidebarToggle').click(function(){
-      $('#text-vehc').hide();
-    });
-      $('#vinfo').on('hidden.bs.collapse', function () {
-        // do something…
-      })
-      $('#vinfo').on('shown.bs.collapse', function () {
-        $('#text-vehc').show();
-        // do something…
-      })
-      
-      function downloadPDF() 
-      {
-        var HTML_Width = $("#data-test").width();
-        var HTML_Height = $("#data-test").height();
-        var top_left_margin = 15;
-        var PDF_Width = HTML_Width+(top_left_margin*2);
-        var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
-        var canvas_image_width = HTML_Width;
-        var canvas_image_height = HTML_Height;
-        var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
-        html2canvas($("#data-test")[0],{allowTaint:true}).then(function(canvas) 
-        {
-          canvas.getContext('2d');
-          //console.log(canvas.height+"  "+canvas.width);
-          var imgData = canvas.toDataURL("image/jpeg", 1.0);
-          var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
-          pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
-          for (var i = 1; i <= totalPDFPages; i++) 
-          { 
-            pdf.addPage(PDF_Width, PDF_Height);
-            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
-          }
-          pdf.save("{{filter_search}}-Chassis-History.pdf");
-          });
-        }
-</script>
+<!-- Body end -->
 </body>
-
+<!-- HTML end -->
 </html>

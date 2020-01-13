@@ -1,44 +1,36 @@
-<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">CEP Data</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="modal-body">
-				<div class="form-group">
-						<label >Chassis ID: {{data.shortvin}}</label>
-				</div>
-				<div class="form-group">
-						<label >ESN : {{data.engineserialno}}</label>
-				</div>
-				<div class="form-group">
-						<label >Engine Family : {{data.enginefamilyname}}</label>
-				</div>
-				<div class="form-group">
-						<label >Model Year : {{data.enginemodelyear}}</label>
-				</div>
-				<div class="form-group">
-						<label >Breakdown of Engine Configuration : {{data.breakdownengineconfiguration}}</label>
-				</div>
-				<div class="form-group">
-						<label >HP Rating : {{data.hprating}}</label>
-				</div>
-
-				<div class="form-group">
-						
-				</div>
-
-				<div class="form-group">
-						<label >Truck Model : {{data.truckmodel}}</label>
-				</div>
-
-				<div class="form-group">
-						<label >Current Software Level : {{data.currentsoftwarelevel}}</label>
-				</div>
-				<div class="form-group">
-						<label >Last Software Level : {{data.lastsoftwarelevel}}</label>
-				</div>
-		</div>
+<!-- CEP Data model start -->
+<div class="modal-content table_display_CEP">
+	<!-- Model header start -->
+	<div class="modal-header">
+		<!-- Model title -->
+		<h5 class="modal-title" id="exampleModalLabel">CEP Data</h5>
+		<!-- Model close button -->
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	<!-- Model header end -->
 	</div>
-	
+	<!-- Model body start-->
+    <div class="modal-body">
+		<div class="row">
+			<!-- Model body leftside -->
+			<div class="col-sm-5 col-md-5">
+				<!-- Display CEP Data -->
+				<p>Chassis ID: {{data.shortvin}}</p>
+				<p>ESN : {{data.engineserialno}}</p>
+				<p>Engine Family : {{data.enginefamilyname}}</p>
+				<p>Model Year : {{data.enginemodelyear}}</p>
+				<p>HP Rating : {{data.hprating}}</p>
+				<p>Truck Model : {{data.truckmodel}}</p>
+				<p>Current Software Level : {{data.currentsoftwarelevel}}</p>
+				<p>Last Software Level : {{data.lastsoftwarelevel}}</p>
+			</div>
+			<!-- Model right side -->
+			<div class="col-sm-6 col-md-6 ml-auto text-right">
+				<p>Breakdown of Engine Configuration : {{data.breakdownengineconfiguration}}</p>
+			</div>
+		</div>
+	<!-- Model body end -->
+	</div>
+<!-- CEP Data model end -->
+</div>

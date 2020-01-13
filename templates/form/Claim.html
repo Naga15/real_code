@@ -1,58 +1,106 @@
-<style>
-th{
-	font-weight: normal !important;
-}
-</style>
-<div class="modal-content" style="width:1000px;">
-	<div class="modal-header">
-		<h5 class="modal-title" id="exampleModalLabel">Claim Information</h5>
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body">
-		<table class="table table-bordered">
-			<thead>
+<!-- Claim Model start -->
+<div class="modal-content table_display">
+	<!-- Model header start -->
+    <div class="modal-header">
+		<!-- Model title -->
+        <h5 class="modal-title" id="exampleModalLabel">Claim Information</h5>
+		<!-- Model close button -->
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+	<!-- Model header end -->
+    </div>
+	<!-- Model body start -->
+    <div class="modal-body">
+		<!-- Table start -->
+        <table class="table table-bordered">
+			<!-- Table header start -->
+            <thead>
 				<tr>
-						<th rowspan="2">Claim</th>
-						<th rowspan="2">Dealer Story</th>
-						<th colspan="3">Cost</th>
-						<th colspan="3">Part Replaced</th>
-						<th rowspan="2">Part Source</th>
-						<th rowspan="2">Quantity</th>
-						<th rowspan="2">Campaing</th>
-						<th rowspan="2">Bulletin</th>
+					<th rowspan="2">Claim</th>
+					<th rowspan="2">Dealer Story</th>
+					<th colspan="3">Cost</th>
+					<th rowspan="2">Campaign</th>
+					<th rowspan="2">Bulletin</th>
 				</tr>
 				<tr>
-						<th>Parts</th>
-						<th>Labor</th>
-						<th>Total</th>
-						<th>Part No.</th>
-						<th>Part Desc</th>
-						<th>Part Amount</th>
+					<th>Parts</th>
+					<th>Labor</th>
+					<th>Total</th>
 				</tr>
+			<!-- Table header end -->
+            </thead>
+			<!-- Table body start -->
+            <tbody>
+			<!-- if results available then print data in table row -->
+            {% if results %}
+			<!-- start for loop -->
+            {% for result in results %}
+            <tr>
+                <td>{{result.claimid}}</td>
+                <td>{{result.dealerstory}}</td>
+                <td>{{result.propart}}</td>
+                <td>{{result.prolabor}}</td>
+                <td>{{result.proamount}}</td>
+                <td>{{result.campaignid}}</td>
+                <td>{{result.bulletlink}}</td>
+            </tr>
+			<!-- end for loop -->
+            {% endfor %}
+			<!-- end if -->
+            {% endif %}
+			<!-- Table body end -->
+            </tbody>
+        </table>
+		<!-- Table end -->
 
-			</thead>
-			<tbody>
+		<!-- Table start -->
+        <table class="table table-bordered">
+			<!-- Table header start -->
+            <thead>
+				<tr>
+					<th colspan="1">Parts Replaced</th>
+					<th colspan="1">Case</th>
+					<th colspan="3"></th>
+					<!--
+					<th colspan="3">Cost</th>
+					<th colspan="3">Part Replaced</th>
+					<th rowspan="2">Quantity</th>
+					<th rowspan="2">Campaign</th>
+					<th rowspan="2">Bulletin</th>
+					 -->
+				</tr>
+				<tr>
+					<th>Part No.</th>
+					<th>Part Desc</th>
+					<th>Part Amount</th>
+					<th>Part Source</th>
+					<th>Quantity</th>
+				</tr>
+			<!-- Table header end -->
+            </thead>
+			<!-- Table body start -->
+            <tbody>
+				<!-- if results available then print data in table row -->
 				{% if results %}
-					{% for result in results %}
-						<tr>
-							<td>{{result.claimid}}</td>	
-							<td>{{result.dealerstory}}</td>	
-							<td>{{result.proamount}}</td>
-							<td>{{result.propart}}</td>
-							<td>-</td>
-							<td>{{result.partno}}</td>
-							<td>{{result.partdesc}}</td>
-							<td>{{result.partamount}}</td>
-							<td>{{result.partsource}}</td>
-							<td>{{result.partqty}}</td>
-							<td>{{result.campaignid}}</td>
-							<td>{{result.bulletlink}}</td>
-						</tr>
-					{% endfor %}
-				{% endif %}	
-			</tbody>
-		</table>
-	</div>
+				<!-- start for loop -->
+				{% for result in results %}
+				<tr>
+					<td>{{result.partno}}</td>
+					<td>{{result.partdesc}}</td>
+					<td>{{result.partamount}}</td>
+					<td>{{result.partsource}}</td>
+					<td>{{result.partqty}}</td>
+				</tr>
+				<!-- end for loop -->
+				{% endfor %}
+				<!-- end if -->
+				{% endif %}
+			<!-- Table body end -->
+            </tbody>
+		<!-- Table end -->
+        </table>
+	<!-- Model body end -->
+    </div>
+<!-- Claim Model end -->
 </div>

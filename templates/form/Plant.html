@@ -1,32 +1,37 @@
+<!-- Plant Model start -->
 <div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">Plant Data</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="modal-body">
-				<div class="form-group">
-						<label >Chassis ID: {{data.shortvin}}</label>
-				</div>
-				<div class="form-group">
-					<label >Transmission  Configuration: {{data.transmissionconfiguration}}</label>
-				</div>
-				<div class="form-group">
-						
-				</div>
-				<div class="form-group">
-						<label >Application : {{data.application}}</label>
-				</div>
-				<div class="form-group">
-						<label >Mileage : {{data.currentmileage}}</label>
-				</div>
-				<div class="form-group">
-						<label >After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
-				</div>
-				<div class="form-group">
-						<label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
-				</div>
-		</div>
+	<!-- Model header start -->
+	<div class="modal-header">
+		<!-- Model title -->
+		<h5 class="modal-title" id="exampleModalLabel">Plant Data</h5>
+		<!-- Model close button -->
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	<!-- Model header end -->
 	</div>
-	
+	<!-- Model body start -->
+	<div class="modal-body">
+		<!-- Display Plant information -->
+		<div>
+			<label>Chassis ID: {{data.shortvin}}</label>
+		</div>
+		<div>
+			<label>Transmission  Configuration: {{data.transmissionconfiguration}}</label>
+		</div>
+		<div>
+			<label>Application : {{data.application}}</label>
+		</div>
+		<div>
+			<label>Mileage : {{data.currentmileage}}</label>
+		</div>
+		<div>
+			<label>After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
+		</div>
+		<div>
+			<label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
+		</div>
+	<!-- Model body end -->
+	</div>
+<!-- Plant Model end -->
+</div>

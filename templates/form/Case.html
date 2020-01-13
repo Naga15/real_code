@@ -1,62 +1,101 @@
-<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">{{title}} Information</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="modal-body">
-				<div class="form-group">
-						<label >Claim ID: {{data.claimid}}</label>
-				</div>
-				<div class="form-group">
-						<label >Dealer Story : {{data.dealerstory}}</label>
-				</div>
-				<div class="form-group">
-						<label >Pro Part : {{data.propart}}</label>
-				</div>
-				<div class="form-group">
-						<label >Pro Amount : {{data.proamount}}</label>
-				</div>
-				<div class="form-group">
-						<label >Compaign ID : {{data.compaignid}}</label>
-				</div>
-				<div class="form-group">
-						<label >Bullet Link : {{data.bulletlink}}</label>
-				</div>
+<!-- Case Model start -->
+<div class="modal-content table_display">
+	<!-- Model header start -->
+    <div class="modal-header">
+		<!-- Model title -->
+        <h5 class="modal-title" id="exampleModalLabel">{{title}} Information</h5>
+		<!-- Model close button -->
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+	<!-- Model header end -->
+    </div>
+	<!-- Model body start -->
+    <div class="modal-body">
+		<!-- Table start -->
+        <table class="table table-bordered">
+			<!-- Table header start -->
+            <thead>
+            <tr>
+                <th rowspan="2">Claim</th>
+                <th rowspan="2">Dealer Story</th>
+                <th colspan="3">Cost</th>
+                <th rowspan="2">Campaign</th>
+                <th rowspan="2">Bulletin</th>
+            </tr>
+            <tr>
+                <th>Parts</th>
+                <th>Labor</th>
+                <th>Total</th>
+            </tr>
+			<!-- Table header end -->
+            </thead>
 
-				<div class="form-group">
-						<label> Part No : {{data.partno}} </label>
-				</div>
+			<!-- Table body start -->
+            <tbody>
+            <tr>
+				<!-- Display Case Data -->
+                <td>{{data.claimid}}</td>
+                <td>{{data.dealerstory}}</td>
+                <td>{{data.propart}}</td>
+                <td>{{data.prolabor}}</td>
+                <td>{{data.proamount}}</td>
+                <td>{{data.campaignid}}</td>
+                <td>{{data.bulletlink}}</td>
+            </tr>
+			<!-- Table body end -->
+            </tbody>
+		<!-- Table end -->
+        </table>
 
-				<div class="form-group">
-						<label >Part Desc : {{data.partdesc}}</label>
-				</div>
+		<!-- Table start -->
+        <table class="table table-bordered">
+			<!-- Table header start -->
+            <thead>
+            <tr>
+                <th colspan="1">Parts Replaced</th>
+                <th colspan="1">Case</th>
+                <th colspan="3"></th>
+                <!--
+                <th colspan="3">Cost</th>
+				<th colspan="3">Part Replaced</th>
+				<th rowspan="2">Quantity</th>
+				<th rowspan="2">Campaign</th>
+				<th rowspan="2">Bulletin</th>
+                 -->
+			</tr>
+            <tr>
+                <th>Part No.</th>
+                <th>Part Desc</th>
+                <th>Part Amount</th>
+                <th>Part Source</th>
+                <th>Quantity</th>
+            </tr>
+			<!-- Table header end -->
+            </thead>
 
-				<div class="form-group">
-						<label >Part Mat : {{data.partmat}}</label>
-				</div>
-				<div class="form-group">
-						<label >Part Source : {{data.partsource}}</label>
-				</div>
-				<div class="form-group">
-						<label >Part ATY: {{data.partaty}}</label>
-				</div>
-				<!-- <div class="form-group">
-						<label >Mileage : {{data.currentmileage}}</label>
-				</div>
-				<div class="form-group">
-						<label >After Treatment Software Level : {{data.aftertreatmentsoftwarelevel}}</label>
-				</div>
-				<div class="form-group">
-						<label>Rear Axle Ratio : {{data.rearaxleratio}}</label>
-				</div> -->
-		</div>
-	
-	
-	</div>
-
-	<script>
-	console.log("{{results}}");
-	
-	</script>
+			<!-- Table body start -->
+            <tbody>
+				<!-- if data is available -->
+				{% if results %}
+				<!-- start for loop -->
+				{% for result in results %}
+				<tr>
+					<td>{{data.partno}}</td>
+					<td>{{data.partdesc}}</td>
+					<td>{{data.partamount}}</td>
+					<td>{{data.partsource}}</td>
+					<td>{{data.partqty}}</td>
+				</tr>
+				<!-- end for loop -->
+				{% endfor %}
+				<!-- end if -->
+				{% endif %}
+			<!-- Table body end -->
+            </tbody>
+		<!-- Table end -->
+        </table>
+	<!-- Model body end -->
+    </div>
+<!-- Case Model end -->
+</div>

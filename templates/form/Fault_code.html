@@ -1,35 +1,48 @@
-<style>
-th{
-	font-weight: normal !important;
-}
-</style>
-<div class="modal-content" style="width:1000px;">
+<!-- Fault code model start -->
+<div class="modal-content">
+	<!-- Model header start -->
 	<div class="modal-header">
+		<!-- Model title -->
 		<h5 class="modal-title" id="exampleModalLabel">Fault Code</h5>
+		<!-- Model close button -->
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
+	<!-- Model header end -->
 	</div>
+	<!-- Model body start -->
 	<div class="modal-body">
+		<!-- Table start -->
 		<table class="table table-bordered">
+			<!-- Table header start -->
 			<thead>
 				<tr>
 					<th>Fault Code</th>
 					<th>Fault Description</th>
 					<th>Mileage</th>
 				</tr>
+			<!-- Table header end -->
 			</thead>
+			<!-- Table body start -->
 			<tbody>
-				{% if results %}
-					{% for result in results %}
+				<!-- if data is available -->
+				{% if data %}
+					<!-- start for loop -->
+					{% for row in data %}
 						<tr>
-							<td>{{result.faultcode}}</td>	
-							<td>{{result.faultdesc}}</td>
-							<td>{{result.Mileage}}</td>
+							<td>{{row.faultcode}}</td>
+							<td>{{row.faultdesc}}</td>
+							<td>{{row.mileage}}</td>
 						</tr>
+					<!-- end for loop -->
 					{% endfor %}
-				{% endif %}	
+				<!-- end if -->
+				{% endif %}
+			<!-- Table body end -->
 			</tbody>
+		<!-- Table end -->
 		</table>
+	<!-- Model body end -->
 	</div>
+<!-- Fault code model end -->
 </div>

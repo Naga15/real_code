@@ -1,0 +1,144 @@
+.card-header a{
+  font-size: 1rem;
+  color: black;
+  font-weight: normal;
+}
+
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+  color: black;
+}
+.card-header .collapsed .fa {
+  transform: rotate(180deg);
+}
+
+#vinfo {
+  font-size: 14px;
+}
+
+/* for Responsive footer */
+/* -----------START---------- */
+#content-wrapper{
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 0px !important;
+}
+
+footer{
+    background-color: #f2f2f2;
+    margin-top: 20px;
+    padding: 20px;
+    border-top: solid 1px orange;
+    color: gray;
+}
+/* -----------END---------- */
+
+/* To display x axis and y axis info in one line like day, week, year and miles, hours, km */
+.x-axis-info, .y-axis-info {
+    margin-right: 0.4rem;
+}
+
+.sidebar.toggled {
+    overflow: visible;
+    width: 100px !important;
+}
+
+.sidebar {
+    overflow: visible;
+    width: 285px !important;
+}
+
+footer.sticky-footer {
+    width: calc(100% - 285px);
+}
+body.sidebar-toggled footer.sticky-footer {
+    width: calc(100% - 175px);
+}
+
+.main_heading{
+    font-style: italic;
+    color: white;
+    font-variant: slashed-zero;
+    text-shadow: 10px 10px 10px #212529;
+    font-size: 18px;
+}
+
+.center_heading{
+    /* font-style: italic; */
+    color: orange;
+    text-shadow: 2px 2px 4px #007bff;
+    font-size: 18px;
+    font-variant: petite-caps;
+}
+
+.margin_left30{
+    margin-left:30%;
+}
+
+.height20{
+    height: 20px;
+}
+
+.color_white{
+    color: white;
+}
+
+@media only screen and (max-width: 1306px) {
+  .card-form {
+    height: 155px !important;
+  }
+}
+.card-form {
+	height: 130px;
+}
+
+.font_size14{
+    font-size: 14px;
+}
+
+.modal_div{
+    margin-top:50%;
+    margin-left:50%;
+}
+
+.text_underline{
+    text-decoration:underline;
+}
+
+.custom-checkbox{
+    margin-top: 2rem;
+    margin-left: 2rem;
+}
+
+.card-login{
+    box-shadow: 0 20px 20px 0 rgba(0, 0, 0, 0.2), 0 20px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.loginbox_bg{
+    background: #9C27B0;
+    background-image: linear-gradient(45deg, #03A9F4, transparent);
+}
+.card_heading{
+    font-style: italic;
+    color: white;
+    text-shadow: 2px 2px 4px darkblue;
+}
+.modal-content table th{
+	font-weight: normal !important;
+}
+
+.modal-content .table-bordered thead th, .table-bordered thead td {
+    text-align: center;
+}
+
+.table_display{
+    width: 1140px;
+    margin-left: -10em;
+}
+
+.table_display_CEP{
+    width: 700px;
+    margin-left: 5em;
+}
