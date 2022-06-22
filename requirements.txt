@@ -4,7 +4,7 @@ Django==2.2.5
 django-auth-ldap==2.0.0
 django-db-logger==0.1.7
 idna==2.8
-numpy==1.17.2
+numpy==1.22.0
 pandas==0.25.1
 plotly==4.1.1
 pyasn1==0.4.7
